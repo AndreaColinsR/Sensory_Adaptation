@@ -3,15 +3,15 @@ k3d=2;%1= k3d, 0=k_hor, 2=newk
 counter=0;
 av_unit=0;
 %fig2=figure;
-folder=[{'Glu32_19092017H'};{'Glu32_21092017H'};{'Glu43_22122017H'};{'Glu35_10112017H'};{'Glu35_13112017H/first_segment'};{'Glu35_13112017H/second_segment'}];
-folder2=[{'Glu32_190917a_20170919_'},{'Glu32_210917a_20170921_'},{'Glu43_221217a_20171222_'},{'Glu35_101117a_20171110_'},{'Glu35_131117a_20171113_'},{'Glu35_131117a_20171113_'}];
+folder=[{'Glu32_19092017H'};{'Glu32_21092017H'};{'Glu43_22122017H'};{'Glu35_10112017H'};{'Glu35_13112017H_1'};{'Glu35_13112017H_2'}];
+%folder2=[{'Glu32_190917a_20170919_'},{'Glu32_210917a_20170921_'},{'Glu43_221217a_20171222_'},{'Glu35_101117a_20171110_'},{'Glu35_131117a_20171113_'},{'Glu35_131117a_20171113_'}];
 [~,txt]=xlsread('Adaptation_units_list.xlsx',1);
-colours=[{'b'};{'g'};{'r'};{'c'};{'m'};{'k'}];
+%colours=[{'b'};{'g'};{'r'};{'c'};{'m'};{'k'}];
 deltak_correct_all_trials=[];
 deltak_incorrect_all_trials=[];
 deltak_correct_later=[];
 deltak_incorrect_later=[];
-for f=1
+for f=1:size(folder,1)
     
     cd(folder{f})
     info=xlsread('ledtrials.xlsx');
@@ -81,6 +81,7 @@ for f=1
     k_c2_incorrect=k_c2(idx_incorrect,:);
     
     for unit=1:size(ff,1)
+        onthelist(txt,[folder{f} ff(unit).name])
         
         if onthelist(txt,[folder{f} ff(unit).name])
             load(ff(unit).name)
@@ -97,7 +98,6 @@ for f=1
             [x1_incorrect,p1_incorrect,x2_incorrect,p2_incorrect,~,~,~,~,~,~,deltak_incorrect,touch_idx_incorrect,FR_incorrect,~,~,~]=Tcurve_touches_dk(touches_matrix_incorrect,touches_whisker_incorrect,total_psth_incorrect,k_c1_incorrect,k_c2_incorrect,0,4);
             
             [lambda1,~]=Tcurve_touches_dk_cross_val(touches_matrix,touches_whisker,total_psth,k_c1,k_c2,0,4);
-            
             if ~isnan(p1)
                 av_unit=av_unit+1;
                 
@@ -243,6 +243,7 @@ for f=1
             clear FR FR_prev FR1_all FR2_all FR2
         end
     end
+    
     subplot(3,3,6)
     deltak_touch(f,:)=[mean(deltak(touch_idx==1)) mean(deltak(touch_idx==2)) mean(deltak(touch_idx==3)) mean(deltak(touch_idx>3))];
     deltak_touch_correct(f,:)=[mean(deltak_correct(touch_idx_correct==1)) mean(deltak_correct(touch_idx_correct==2)) mean(deltak_correct(touch_idx_correct==3)) mean(deltak_correct(touch_idx_correct>3))];
@@ -267,15 +268,8 @@ for f=1
     title('delta k')
     
     clear deltak touch_idx
-    if f==size(folder,1)-1
-        cd ..
-        cd ..
-        cd ..
-    else
-        cd ..
-        cd ..
-        
-    end
+    cd ..
+
 end
 
 subplot(3,3,1)
@@ -407,7 +401,6 @@ errorbar(1:4,mean(FR_touch_incorrect,1),std(FR_touch_incorrect,[],1),'r')
 [h2,p2] = ttest2(FR_touch(:,2),FR_touch(:,3),'Tail','right');
 [h3,p3] = ttest2(FR_touch(:,3),FR_touch(:,4),'Tail','right');
 
-cd ..
 % how many units show adaptation?
 lower=sum(hFR);
 
