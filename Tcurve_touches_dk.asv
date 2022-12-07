@@ -167,6 +167,7 @@ if ~normalised
 end
 
 if ~do_plot
+    deltak_1
     [~,x1,p1]=plotTCurve(deltak_1,FR_1,'',N_first,percentile_1);
     [~,x2,p2,y2]=plotTCurve(deltak_2,FR_2,'',N_latter,percentile_2);
     [~,x_all,p_all]=plotTCurve(deltak_1,FR_1wong,'',N_first,percentile_1);

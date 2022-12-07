@@ -12,6 +12,8 @@ NT_correct=[];
 NT_incorrect=[];
 ITT_correct=[];
 ITT_incorrect=[];
+percentile_1=1;
+percentile_2=1;
 for f=1:size(folder,1)
     cd([folder{f} '/'])
     info=xlsread('ledtrials.xlsx');
@@ -34,12 +36,12 @@ for f=1:size(folder,1)
         [nt_per_trial,inter_time_touch,length_touch]=touch_variability_behaviour(1:size(k_c2,1),0);
     end
     
-    [~,~,~,~,~,~,~,~,~,~,deltak,~,~,~,~,~]=Tcurve_touches_dk(touches_matrix,touches_whisker,total_psth,k_c1,k_c2,0,4);
+    [~,~,~,~,~,~,~,~,~,~,deltak,~,~,~,~,~]=Tcurve_touches_dk(touches_matrix,touches_whisker,total_psth,k_c1,k_c2,0,4,0,percentile_1,percentile_2);
     % only correct trials
-    [~,~,~,~,~,~,~,~,~,~,deltak_correct,~,~,~,~,~]=Tcurve_touches_dk(touches_matrix(idx_correct,:,:),touches_whisker(idx_correct,:,:),total_psth(idx_correct,:,:),k_c1(idx_correct,:,:),k_c2(idx_correct,:,:),0,4);
+    [~,~,~,~,~,~,~,~,~,~,deltak_correct,~,~,~,~,~]=Tcurve_touches_dk(touches_matrix(idx_correct,:,:),touches_whisker(idx_correct,:,:),total_psth(idx_correct,:,:),k_c1(idx_correct,:,:),k_c2(idx_correct,:,:),0,4,0,percentile_1,percentile_2);
     [nt_per_trial_correct,inter_time_touch_correct,length_touch_correct]=touch_variability_behaviour(idx_correct,0);
     % only incorrect trials
-    [~,~,~,~,~,~,~,~,~,~,deltak_incorrect,~,~,~,~,~]=Tcurve_touches_dk(touches_matrix(idx_incorrect,:,:),touches_whisker(idx_incorrect,:,:),total_psth(idx_incorrect,:,:),k_c1(idx_incorrect,:,:),k_c2(idx_incorrect,:,:),0,4);
+    [~,~,~,~,~,~,~,~,~,~,deltak_incorrect,~,~,~,~,~]=Tcurve_touches_dk(touches_matrix(idx_incorrect,:,:),touches_whisker(idx_incorrect,:,:),total_psth(idx_incorrect,:,:),k_c1(idx_incorrect,:,:),k_c2(idx_incorrect,:,:),0,4,0,percentile_1,percentile_2);
     [nt_per_trial_incorrect,inter_time_touch_incorrect,length_touch_incorrect]=touch_variability_behaviour(idx_incorrect,0);
     
     
