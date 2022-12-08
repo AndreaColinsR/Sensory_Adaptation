@@ -1,4 +1,4 @@
-function [fig4,change_explained_by_adap]=all_Tcurves
+function [fig4,change_explained_by_adap,FR_touch]=all_Tcurves
 k3d=2;%1= k3d, 0=k_hor, 2=newk
 do_extra_plot=0;
 counter=0;
@@ -14,6 +14,8 @@ fig4=figure;%% Fig 4 from the paper
 folder=[{'Glu32_19092017H'};{'Glu32_21092017H'};{'Glu43_22122017H'};{'Glu35_10112017H'};{'Glu35_13112017H_1'};{'Glu35_13112017H_2'}];
 [~,txt]=xlsread('Adaptation_units_list.xlsx',1);
 
+nunits=size(txt,1);
+FR_touch=nan(nunits,4);
 for f=1:size(folder,1)
     
     cd(folder{f})
@@ -201,9 +203,7 @@ for f=1:size(folder,1)
                 end
                 FR_touch(av_unit,:)=[mean(FR(touch_idx==1)) mean(FR(touch_idx==2)) mean(FR(touch_idx==3)) mean(FR(touch_idx>3))]/mean(FR(touch_idx==1));
                 
-                subplot(3,3,9)
-                hold on
-                plot([1 2 3 4],FR_touch(av_unit,:))
+
                 %
                 
                 
@@ -362,11 +362,13 @@ errorbar(1:4,mean(deltak_touch,1),std(deltak_touch,[],1),'k')
 
 
 subplot(3,3,9)
-% xlabel('Touch number')
-% xticks([1 2 3 4])
-% ylabel('FR')
-% xlim([0.5 4.5])
-% errorbar(1:4,mean(FR_touch,1),std(FR_touch,[],1),'k')
+hold on
+plot([1 2 3 4],FR_touch')
+xlabel('Touch number')
+xticks([1 2 3 4])
+ylabel('FR')
+xlim([0.5 4.5])
+
 
 [h1,p1] = ttest(FR_touch(:,2),1,'Tail','left');
 [h2,p2] = ttest2(FR_touch(:,2),FR_touch(:,3),'Tail','right');

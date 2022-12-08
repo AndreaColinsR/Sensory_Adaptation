@@ -1,9 +1,11 @@
-function all_Tcurves_correct_incorrect_population
+function [FR_touch,FR_touch_correct,FR_touch_incorrect]=all_Tcurves_correct_incorrect_population
 k3d=2;%1= k3d, 0=k_hor, 2=newk
 counter=0;
 av_unit=0;
-folder=[{'Glu32_19092017H'};{'Glu32_21092017H'};{'Glu43_22122017H'};{'Glu35_10112017H'};{'Glu35_13112017H/first_segment'};{'Glu35_13112017H/second_segment'}];
+folder=[{'Glu32_19092017H'};{'Glu32_21092017H'};{'Glu43_22122017H'};{'Glu35_10112017H'};{'Glu35_13112017H_1'};{'Glu35_13112017H_1'}];
 [~,txt]=xlsread('Adaptation_units_list.xlsx',1);
+percentile_1=0.95;
+percentile_2=0.95;
 
 deltak_correct_1_all=[];
 deltak_incorrect_1_all=[];
@@ -13,7 +15,7 @@ FR_correct_1_all=[];
 FR_incorrect_1_all=[];
 FR_correct_later_all=[];
 FR_incorrect_later_all=[];
-for f=1
+for f=1:size(folder,1)
     
     cd(folder{f})
     info=xlsread('ledtrials.xlsx');
@@ -100,14 +102,14 @@ for f=1
         end
     end
     
-    [x1,p1,x2,p2,x1_norm,p1_norm,x2_norm,p2_norm,x_all,p_all,deltak,touch_idx,FR,~,FR_prev,whisker]=Tcurve_touches_dk(touches_matrix,touches_whisker,total_psth,k_c1,k_c2,0,4);
-    [x1_correct,p1_correct,x2_correct,p2_correct,~,~,~,~,~,~,deltak_correct,touch_idx_correct,FR_correct,~,~,~]=Tcurve_touches_dk(touches_matrix_correct,touches_whisker_correct,total_psth_correct,k_c1_correct,k_c2_correct,0,4);
-    [x1_incorrect,p1_incorrect,x2_incorrect,p2_incorrect,~,~,~,~,~,~,deltak_incorrect,touch_idx_incorrect,FR_incorrect,~,~,~]=Tcurve_touches_dk(touches_matrix_incorrect,touches_whisker_incorrect,total_psth_incorrect,k_c1_incorrect,k_c2_incorrect,0,4);
+    [x1,p1,x2,p2,x1_norm,p1_norm,x2_norm,p2_norm,x_all,p_all,deltak,touch_idx,FR,~,FR_prev,whisker]=Tcurve_touches_dk(touches_matrix,touches_whisker,total_psth,k_c1,k_c2,0,4,0,percentile_1,percentile_2);
+    [x1_correct,p1_correct,x2_correct,p2_correct,~,~,~,~,~,~,deltak_correct,touch_idx_correct,FR_correct,~,~,~]=Tcurve_touches_dk(touches_matrix_correct,touches_whisker_correct,total_psth_correct,k_c1_correct,k_c2_correct,0,4,0,percentile_1,percentile_2);
+    [x1_incorrect,p1_incorrect,x2_incorrect,p2_incorrect,~,~,~,~,~,~,deltak_incorrect,touch_idx_incorrect,FR_incorrect,~,~,~]=Tcurve_touches_dk(touches_matrix_incorrect,touches_whisker_incorrect,total_psth_incorrect,k_c1_incorrect,k_c2_incorrect,0,4,0,percentile_1,percentile_2);
     
     [lambda1,~]=Tcurve_touches_dk_cross_val(touches_matrix,touches_whisker,total_psth,k_c1,k_c2,0,4);
     
     if ~isnan(p1_incorrect)
-        av_unit=av_unit+1
+        av_unit=av_unit+1;
         
         spikes_incorrect_1(av_unit)=sum(FR_correct(touch_idx_correct==1));
         coeff1(av_unit,:)=p1;
@@ -471,7 +473,6 @@ errorbar(1:4,mean(FR_touch_incorrect,1),std(FR_touch_incorrect,[],1),'r')
 [h2,p2] = ttest2(FR_touch(:,2),FR_touch(:,3),'Tail','right');
 [h3,p3] = ttest2(FR_touch(:,3),FR_touch(:,4),'Tail','right');
 
-cd ..
 % how many units show adaptation?
 lower=sum(hFR);
 %mean(pvalFR(hFR>0))
