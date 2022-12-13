@@ -276,15 +276,7 @@ if do_plot
     xlabel('\Delta \kappa')
     ylabel('FR')
     box off
-    
-%     subplot(3,3,5)
-%     plot(nsamples1,'r')
-%     hold on
-%     plot(nsamples2,'k')
-%     box off
-%     xlabel('Segment')
-%     ylabel('Nsamples')
-%  
+
     
 end
 
