@@ -1,4 +1,4 @@
-function [x1,p1,x2,p2,x1_norm,p1_norm,x2_norm,p2_norm,x_all,p_all,deltak,touch_idx,FR,deltak_norm,FR_prev,whisker]=Tcurve_touches_dk(touches,touches_whisker,psth,k_c1,k_c2,do_plot,N_first,subplot_idx,percentile_1,percentile_2)
+function [x1,p1,x2,p2,x1_norm,p1_norm,x2_norm,p2_norm,x_all,p_all,deltak,touch_idx,FR,deltak_norm,FR_prev,whisker,spikes]=Tcurve_touches_dk(touches,touches_whisker,psth,k_c1,k_c2,do_plot,N_first,subplot_idx,percentile_1,percentile_2)
 %this code assumes that the input is dk1 and dk2
 counter=1;
 k_hor(:,:,1)=k_c1;
@@ -6,7 +6,6 @@ k_hor(:,:,2)=k_c2;
 window=100;
 window_ad=600;
 normalised=0;
-%N_first=5;
 N_latter=N_first;
 
 %counter2=1;
@@ -153,11 +152,6 @@ if total_sp<40
     y2=nan;
     return
 end
-%raster sorted by dk
-%sorted by touch order in every trial
-[deltak_ver,idx]=sort(abs(deltak_hor));
-raster_delta2=spikes(idx,:);
-touch_idx2=touch_idx(idx);
 
 if ~normalised
     x1_norm=0;

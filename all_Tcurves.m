@@ -1,4 +1,4 @@
-function [fig4,change_explained_by_adap,FR_touch]=all_Tcurves
+function [change_explained_by_adap,FR_touch]=all_Tcurves(fig4)
 k3d=2;%1= k3d, 0=k_hor, 2=newk
 do_extra_plot=0;
 counter=0;
@@ -7,9 +7,6 @@ av_unit=0;
 percentile_1=0.95;
 percentile_2=0.95;
 NpointsTcurve=4;
-fig1=figure;
-fig3=figure;
-fig4=figure;%% Fig 4 from the paper
 
 folder=[{'Glu32_19092017H'};{'Glu32_21092017H'};{'Glu43_22122017H'};{'Glu35_10112017H'};{'Glu35_13112017H_1'};{'Glu35_13112017H_2'}];
 [~,txt]=xlsread('Adaptation_units_list.xlsx',1);
@@ -21,11 +18,6 @@ for f=1:size(folder,1)
     cd(folder{f})
     
     if k3d==1
-        %k3D
-        %         load('deltak_c2.mat')
-        %         k_c2=touches_matrix/0.047;
-        %         load('deltak_c1.mat')
-        %         k_c1=touches_matrix/0.047;
         [~,~,~,matrix_norm]=normalised_by_trial(15,0);
         k_c1=matrix_norm(:,:,1);
         k_c2=matrix_norm(:,:,2);
@@ -36,15 +28,7 @@ for f=1:size(folder,1)
         load('kinematicsgoc1.mat')
         k_c1=azimuth;
         
-        %         for i=1:size(azimuth,1)
-        %             k_c1(i,:)=[0 abs(diff(k_c1(i,:)))];
-        %            k_c2(i,:)=[0 abs(diff(k_c2(i,:)))];
-        %         end
     else
-        %newk
-        %          load('surprise.mat')
-        %          k_c2=[zeros(size(surprise,1),500) surprise];
-        %          k_c1=[zeros(size(surprise,1),500) surprise];
         
         load('newk1.mat')
         k_c1=newk1*1.7/0.047;
@@ -78,7 +62,6 @@ for f=1:size(folder,1)
             %     size(total_psth)
             %     size(k_c1)
             clear deltak touch_idx FR
-            figure(fig3)
             
             [x1,p1,x2,p2,x1_norm,p1_norm,x2_norm,p2_norm,x_all,p_all,deltak,touch_idx,FR,~,FR_prev,whisker]=Tcurve_touches_dk(touches_matrix,touches_whisker,total_psth,k_c1,k_c2,do_extra_plot,NpointsTcurve,0,percentile_1,percentile_2);
             
@@ -140,37 +123,18 @@ for f=1:size(folder,1)
                 plot(mean(FR(touch_idx==1)),mean(FR1_all(:)),'ok')
                 
                 
-                figure(fig1)
-                subplot(3,3,5)
-                %errorbar([1 2 3 4],[mean(FR1_1(:)) mean(FR1_all(:)) mean(FR2_all(:)) mean(FR2(:))],[std(FR1_1(:)) std(FR1_all(:)) std(FR2_all(:)) std(FR2(:))],'.-')
-                plot([1 2],[mean(FR(touch_idx==1)'./lambda1) 1/nanmean(FR(touch_idx==1)'./FR1_all(:)')],'bo-')
-                ratioFR(av_unit,:)=[mean(FR(touch_idx==1)'./lambda1) 1/nanmean(FR(touch_idx==1)'./FR1_all(:)')];
                 % response to first touch is X% higher than predicted
                 ratioFRb(av_unit,:)=nanmean(FR(touch_idx==1)'./FR1_all(:)');
-                hold on
                 
                 %% test if FR from first touch is higher than prediction
                 [hFR(av_unit),pvalFR(av_unit)] = ttest(FR(touch_idx==1)',FR1_all(:)','Tail','right');
-                FR_decreased(av_unit)=100-100*mean(FR(touch_idx>1))/mean(FR(touch_idx==1));
+                %FR_decreased(av_unit)=100-100*mean(FR(touch_idx>1))/mean(FR(touch_idx==1));
                 
-                
-                figure(fig1)
-                subplot(3,3,7)
-                %plot([1 2],[1 mean(FR2(:))/mean(FR2_all(:))],'bo-')
+    
                 
                 error1(av_unit)=mean(abs(FR(touch_idx==1)-lambda1(:)));
                 error2(av_unit)=mean(abs(FR(touch_idx==1)-FR1_all(:)));
-                %bar(av_unit,error1,'r')
-                %hold on
-                %bar(av_unit,-error2,'k')
-                %ratioFR2(av_unit,:)=[1 mean(FR2(:))/mean(FR2_all(:))];
-                
-                figure(fig1)
-                subplot(3,3,8)
-                plot([ 1 2],[FR_prev(1) mean(FR(touch_idx==1))],'r-o')
-                hold on
-                plot([ 1 2],[FR_prev(2) mean(FR(touch_idx>1))],'k-o')
-                
+
                 
                 
                 %subplot(3,3,9)
@@ -178,14 +142,6 @@ for f=1:size(folder,1)
                 %errorbar([1 2],[mean(FR((touch_idx>1) & (whisker==1))),mean(FR((touch_idx>1) & (whisker==2)))],[std(FR((touch_idx>1) & (whisker==1))),std(FR((touch_idx>1) & (whisker==2)))])
                 hw(av_unit)=ttest2(FR((whisker==1)),FR((whisker==2)));
                 
-                %         plot(FR_prev(1),p1(2),['or'])
-                %         hold on
-                %         plot(FR_prev(2),p2(2),['dk'])
-                %         xlabel('preactivity')
-                %         ylabel('Intercept')
-                
-                %          1/nanmean(FR(touch_idx==1)'./FR1_all(:)')
-                %         nanmean(FR(touch_idx==1)-FR1_all(:))
                 %mean(FR(touch_idx==2))
                 %(mean(FR(touch_idx==1))-mean(FR(touch_idx==2)))
                 %change_explained_by_adap(av_unit)=(1-ratioFR(av_unit,2))/(1-(mean(FR(touch_idx>1))/mean(FR(touch_idx==1))))
@@ -214,10 +170,6 @@ for f=1:size(folder,1)
                 %                 plot(x1_norm,f1_norm./mean(FR(touch_idx==1)),'-or')
                 %                 hold on
                 %                 plot(x2_norm,f2_norm./mean(FR(touch_idx>1)),'-ok')
-                % %                 subplot(3,3,9)
-                % %                 R_norm=coeff_det(f1/p1_norm(2),f2/p2_norm(2));
-                % %                 plot([1 2], [R R_norm],'o-')
-                % %                 hold on
                 %
                 %                 subplot(3,3,8)
                 %                 FR1_1=simspikes(deltak_norm(touch_idx==1)',p1_norm,50); %first touch with correspondent tuning curve
@@ -241,11 +193,7 @@ for f=1:size(folder,1)
             
         end
     end
-    figure(fig1)
-    subplot(3,3,6)
-    hold on
-    deltak_touch(f,:)=[mean(deltak(touch_idx==1)) mean(deltak(touch_idx==2)) mean(deltak(touch_idx==3)) mean(deltak(touch_idx>3))];
-    plot([1 2 3 4],deltak_touch(f,:))
+
     
     if f==4
         figure(fig4)
@@ -345,30 +293,33 @@ errorbar(mean(xr(:,1)),mean(xr(:,2)),std(xr(:,2)),'vertical','.r')
 % xticklabels({'','first touch ratio','later touches ratio',''})
 %errorbar([1 2], nanmean(ratioFR_norm),nanstd(ratioFR_norm),'.-k','LineWidth',2)
 
-%nanmean(ratioFR_norm)
-figure(fig1)
-subplot(3,3,6)
-xlabel('Touch number')
-xticks([1 2 3 4])
-ylabel('K')
-xlim([0.5 4.5])
-
-errorbar(1:4,mean(deltak_touch,1),std(deltak_touch,[],1),'k')
-
-[hd1,pd1] = ttest2(deltak_touch(:,1),deltak_touch(:,2));
-[hd2,pd2] = ttest2(deltak_touch(:,2),deltak_touch(:,3));
-[hd3,pd3] = ttest2(deltak_touch(:,3),deltak_touch(:,4));
 
 
 
-subplot(3,3,9)
-hold on
-plot([1 2 3 4],FR_touch')
-xlabel('Touch number')
-xticks([1 2 3 4])
-ylabel('FR')
-xlim([0.5 4.5])
+% figure(fig1)
+% subplot(3,3,6)
+% xlabel('Touch number')
+% xticks([1 2 3 4])
+% ylabel('K')
+% xlim([0.5 4.5])
+% 
+% errorbar(1:4,mean(deltak_touch,1),std(deltak_touch,[],1),'k')
+% 
+% [hd1,pd1] = ttest2(deltak_touch(:,1),deltak_touch(:,2));
+% [hd2,pd2] = ttest2(deltak_touch(:,2),deltak_touch(:,3));
+% [hd3,pd3] = ttest2(deltak_touch(:,3),deltak_touch(:,4));
 
+
+
+% subplot(3,3,9)
+% hold on
+% plot([1 2 3 4],FR_touch')
+% xlabel('Touch number')
+% xticks([1 2 3 4])
+% ylabel('FR')
+% xlim([0.5 4.5])
+
+%Are the reponses to touch significantly weaker over time?
 
 [h1,p1] = ttest(FR_touch(:,2),1,'Tail','left');
 [h2,p2] = ttest2(FR_touch(:,2),FR_touch(:,3),'Tail','right');
@@ -379,9 +330,6 @@ lower=sum(hFR)
 mean(pvalFR(hFR>0))
 
 
-%subplot(3,3,9)
-% FO=fit(X',Y','poly1');
-% plot([0 max(X)], FO.p1*[0 max(X)]+FO.p2,'k')
 % response to first touch is X% higher than predicted
 mean(ratioFRb(ratioFRb<10))
 mean(pval_atte(h_atte>0))

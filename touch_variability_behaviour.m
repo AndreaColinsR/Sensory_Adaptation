@@ -90,7 +90,6 @@ for i=1:ntrials
 end
 
 if do_plot
-    figure
     image(touches_m,'AlphaData',0.2)
     xlim([500 3488])
     xlabel('Time [ms]')
