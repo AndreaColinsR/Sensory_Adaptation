@@ -4,22 +4,28 @@ close all
 clear all
 tic
 %Figure 1
-variability_behaviour
+fig1=figure;
+variability_behaviour(fig1)
 
 % Figure 2
-[FR_touch,FR_touch_correct,FR_touch_incorrect]=all_Tcurves_correct_incorrect_population;
 fig2=figure;
+[FR_touch,FR_touch_correct,FR_touch_incorrect]=all_Tcurves_correct_incorrect_population;
+recovery_test(fig2)
 
 
 % Figure 3
+fig3=figure;
+strenght_of_whisker_touches(fig3)
+distance_base_all_sessions(fig3)
 
 % Figure 4
-[fig4,change_explained_by_adap,FR_unit]=all_Tcurves;
+fig4=figure;
+[change_explained_by_adap,FR_unit]=all_Tcurves(fig4);
 gradual_adaptation(fig4)
 
 
+% Figure 2 panel C
 figure(fig2)
-
 subplot(4,3,3)
 plot(1:4,FR_unit','Color',[0.5 0.5 0.5])
 hold on 
@@ -33,9 +39,14 @@ xlim([0.5 4.5])
 box off
 
 % Figure 5
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
 fig5=figure;
 cross_whisker_adaptation(fig5)
 toc
 >>>>>>> Stashed changes
+=======
+fig5=figure;
+cross_whisker_adaptation(fig5)
+>>>>>>> 58cd314d1cf2e1fe1fb52cd155e4e60680de63f8
