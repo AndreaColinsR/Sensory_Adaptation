@@ -32,14 +32,9 @@ for f=1:size(folder,1)
     
     % original line (all trials)
     if f==3
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
+
+        subplot(4,2,[ 3 5 7])
         
->>>>>>> Stashed changes
-=======
-        subplot(4,2,[1 3 5 7])
->>>>>>> 58cd314d1cf2e1fe1fb52cd155e4e60680de63f8
         [nt_per_trial,inter_time_touch,length_touch]=touch_variability_behaviour(1:size(k_c2,1),1);
     else
         [nt_per_trial,inter_time_touch,length_touch]=touch_variability_behaviour(1:size(k_c2,1),0);
