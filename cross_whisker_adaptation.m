@@ -88,7 +88,10 @@ for f=1:size(folder,1)
             %% Calculate prediction 
             
             [~,~,~,~,~,~,~,~,~,~,deltaktotal,touch_idxtotal,FRtotal,~,~,whisker]=Tcurve_touches_dk(touches_matrix,touches_whisker,psth,newk(:,:,1),newk(:,:,2),0,4,2,percentile_1,percentile_2);
+<<<<<<< HEAD
             deltaktotal=abs(deltaktotal);
+=======
+>>>>>>> 58cd314d1cf2e1fe1fb52cd155e4e60680de63f8
             
             deltaktotal(touch_idxtotal<3)=[];
             FRtotal(touch_idxtotal<3)=[];

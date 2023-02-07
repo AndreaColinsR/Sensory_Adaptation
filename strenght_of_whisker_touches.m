@@ -50,9 +50,12 @@ for f=1:nfolders
     [~,~,~,~,~,~,~,~,~,~,deltak_correct,touch_idx_correct,~,~,~,~]=Tcurve_touches_dk(touches_matrix_correct,touches_whisker_correct,total_psth_correct,k_c1_correct,k_c2_correct,0,4,0,percentile_1,percentile_2);
     [~,~,~,~,~,~,~,~,~,~,deltak_incorrect,touch_idx_incorrect,~,~,~,~]=Tcurve_touches_dk(touches_matrix_incorrect,touches_whisker_incorrect,total_psth_incorrect,k_c1_incorrect,k_c2_incorrect,0,4,0,percentile_1,percentile_2);
     
+<<<<<<< HEAD
     deltak=abs(deltak);
     deltak_correct=abs(deltak_correct);
     deltak_incorrect=abs(deltak_incorrect);
+=======
+>>>>>>> 58cd314d1cf2e1fe1fb52cd155e4e60680de63f8
     
     deltak_touch(f,:)=[mean(deltak(touch_idx==1)) mean(deltak(touch_idx==2)) mean(deltak(touch_idx==3)) mean(deltak(touch_idx>3))];
     deltak_touch_correct(f,:)=[mean(deltak_correct(touch_idx_correct==1)) mean(deltak_correct(touch_idx_correct==2)) mean(deltak_correct(touch_idx_correct==3)) mean(deltak_correct(touch_idx_correct>3))];

@@ -107,6 +107,7 @@ for i=1:ntrials
 end
 
 if do_plot
+<<<<<<< HEAD
 <<<<<<< Updated upstream
     figure
 =======
@@ -114,6 +115,8 @@ if do_plot
     
     subplot(4,2,[3 5 7])
 >>>>>>> Stashed changes
+=======
+>>>>>>> 58cd314d1cf2e1fe1fb52cd155e4e60680de63f8
     image(touches_m,'AlphaData',0.2)
     xlim([500 3488])
     xlabel('Time [ms]')

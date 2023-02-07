@@ -1,4 +1,4 @@
-function variability_behaviour
+function variability_behaviour(fig1)
 folder=[{'Glu32_19092017H'};{'Glu32_21092017H'};{'Glu43_22122017H'};{'Glu35_10112017H'};{'Glu35_13112017H_1'};{'Glu35_13112017H_2'}];
 LT=[];
 NT=[];
@@ -14,6 +14,7 @@ ITT_correct=[];
 ITT_incorrect=[];
 percentile_1=1;
 percentile_2=1;
+figure(fig1)
 for f=1:size(folder,1)
     cd([folder{f} '/'])
     info=xlsread('ledtrials.xlsx');
@@ -31,10 +32,14 @@ for f=1:size(folder,1)
     
     % original line (all trials)
     if f==3
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
         
 >>>>>>> Stashed changes
+=======
+        subplot(4,2,[1 3 5 7])
+>>>>>>> 58cd314d1cf2e1fe1fb52cd155e4e60680de63f8
         [nt_per_trial,inter_time_touch,length_touch]=touch_variability_behaviour(1:size(k_c2,1),1);
     else
         [nt_per_trial,inter_time_touch,length_touch]=touch_variability_behaviour(1:size(k_c2,1),0);
@@ -68,8 +73,8 @@ for f=1:size(folder,1)
     cd ..
     
 end
-figure
-subplot(4,1,1)
+
+subplot(4,2,2)
 hold on
 histogram(dk_correct,-0.03:0.001:0.03,'Normalization','Probability','FaceColor','g')
 histogram(dk_incorrect,-0.03:0.001:0.03,'Normalization','Probability','FaceColor', 'r')
@@ -80,7 +85,7 @@ ylim([0 0.3])
 xlabel('\Delta \kappa [mm^{-1}]')
 ylabel('Fraction of touches')
 
-subplot(4,1,2)
+subplot(4,2,4)
 histogram(LT_correct,0:10:350,'Normalization','Probability','FaceColor','g')
 hold on
 histogram(LT_incorrect,0:10:350,'Normalization','Probability','FaceColor','r')
@@ -104,7 +109,7 @@ yticks([0 0.05])
 
 
 
-subplot(4,1,3)
+subplot(4,2,6)
 histogram(ITT_correct,0:10:300,'Normalization','Probability','FaceColor','g')
 hold on
 histogram(ITT_incorrect,0:10:300,'Normalization','Probability','FaceColor','r')
@@ -115,18 +120,11 @@ ylim([0 0.3])
 xlabel('Inter-touch interval [ms]')
 ylabel('Fraction of touches')
 
-subplot(4,1,4)
+subplot(4,2,8)
 box off
 histogram(NT_correct,0:1:40,'Normalization','Probability','FaceColor','g')
 hold on
 histogram(NT_incorrect,0:1:40,'Normalization','Probability','FaceColor','r')
-
-
-%% averages
-% average number of touches in hit trials
-mean_std_Number_of_T_hit_trials=[mean(NT_correct) std(NT_correct)]
-%average number of touches in miss trials
-mean_std_Number_of_T_miss_trials=[mean(NT_incorrect) std(NT_incorrect)]
 xticks([0 10 20 30 40])
 yticks([0 0.1 0.2 0.3])
 ylim([0 0.3])
@@ -134,4 +132,11 @@ xlabel('Number of touches')
 ylabel('Fraction of touches')
 legend('Hit trials','Miss trials')
 box off
+
+%% averages
+% average number of touches in hit trials
+mean_std_Number_of_T_hit_trials=[mean(NT_correct) std(NT_correct)]
+%average number of touches in miss trials
+mean_std_Number_of_T_miss_trials=[mean(NT_incorrect) std(NT_incorrect)]
+
 end
