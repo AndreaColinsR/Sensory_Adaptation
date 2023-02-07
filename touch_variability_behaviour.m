@@ -4,7 +4,10 @@ tmp=touches_whisker(selected_trials,:,:);
 clear touches_whisker
 touches_whisker=tmp;
 ntrials=size(touches_whisker,1);
-
+load('newk1.mat')
+ k_c1=newk1*1.7/0.047;
+        load('newk2.mat')
+        k_c2=newk2/0.047;
 %%%%Add the touches
 
 touches_m=round(ones(ntrials,3488,3))*255;
@@ -54,6 +57,7 @@ for i=1:ntrials
         nt_per_trial(i)= nt_per_trial(i)+numel(touch_onset);
         nt_per_trial_c2(i)=numel(touch_onset);
     end
+    
     for j=1:numel(touch_onset)
         
         tmp=find(diff(touches_c2(touch_onset(j):end))<0,1,'First');
@@ -87,10 +91,29 @@ for i=1:ntrials
         end
         
     end
+    
+    if do_plot && i==9
+    subplot(4,2,1)
+    image([0 size(touches_m,2)],[-0.03 0.02],touches_m(i,:,:),'AlphaData',0.2)
+    hold on 
+    plot(k_c1(i,:),'b')
+    plot(k_c2(i,:),'g')
+    title(num2str(i))
+    ylim([-0.03 0.02])
+    set(gca,'YDir','normal')
+    hold off
+    box off
+    end
 end
 
 if do_plot
+<<<<<<< Updated upstream
     figure
+=======
+
+    
+    subplot(4,2,[3 5 7])
+>>>>>>> Stashed changes
     image(touches_m,'AlphaData',0.2)
     xlim([500 3488])
     xlabel('Time [ms]')

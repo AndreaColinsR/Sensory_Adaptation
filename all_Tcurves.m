@@ -81,7 +81,7 @@ for f=1:size(folder,1)
             figure(fig3)
             
             [x1,p1,x2,p2,x1_norm,p1_norm,x2_norm,p2_norm,x_all,p_all,deltak,touch_idx,FR,~,FR_prev,whisker]=Tcurve_touches_dk(touches_matrix,touches_whisker,total_psth,k_c1,k_c2,do_extra_plot,NpointsTcurve,0,percentile_1,percentile_2);
-            
+            deltak=abs(deltak);
             
             % [x1,p1,x2,p2,x1_norm,p1_norm,x2_norm,p2_norm,x_all,p_all,deltak,touch_idx,FR,deltak_norm,y2,y2_norm]=Tcurve_touches_dk_norm_bywhisker(touches_matrix,touches_whisker,total_psth,k_c1,k_c2,1,6);
             %[~,~,~,~,~,~,~,~,x_all,p_all,~,~,~,~,~,~]=Tcurve_slips_dk(slips_matrix,slips_whisker,total_psth,k_c1,k_c2,0,4);
@@ -315,8 +315,8 @@ box off
 xlabel('Observed FR [spikes/touch]')
 ylabel('Predicted FR [spikes/touch]')
 plot([0 3],[0 3],'b')
-xlim([0 3])
-ylim([0 3])
+xlim([0 2.5])
+ylim([0 2.5])
 plot(mean(xk(:,1)),mean(xk(:,2)),'.k')
 plot(mean(xr(:,1)),mean(xr(:,2)),'.r')
 errorbar(mean(xk(:,1)),mean(xk(:,2)),std(xk(:,1)),'horizontal','.k')

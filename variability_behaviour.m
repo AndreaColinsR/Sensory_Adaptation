@@ -31,6 +31,10 @@ for f=1:size(folder,1)
     
     % original line (all trials)
     if f==3
+<<<<<<< Updated upstream
+=======
+        
+>>>>>>> Stashed changes
         [nt_per_trial,inter_time_touch,length_touch]=touch_variability_behaviour(1:size(k_c2,1),1);
     else
         [nt_per_trial,inter_time_touch,length_touch]=touch_variability_behaviour(1:size(k_c2,1),0);

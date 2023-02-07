@@ -104,7 +104,7 @@ end
 % std_dk=std_dk(whisker==1);
 FR=sum(spikes(:,100:100+upto),2);
 
-deltak=abs(deltak_hor);
+deltak=deltak_hor;
 deltak_norm=abs(deltak_hor)./std_dk;
 %first touch
 FR_prev_1=mean(FR_prev_tmp(touch_idx==1));

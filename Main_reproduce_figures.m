@@ -2,7 +2,7 @@
 %% This script should be run in the folder "Data", which contains the subfolders (one for each session) with the behavioural and neural data.
 close all
 clear all
-
+tic
 %Figure 1
 variability_behaviour
 
@@ -33,3 +33,9 @@ xlim([0.5 4.5])
 box off
 
 % Figure 5
+<<<<<<< Updated upstream
+=======
+fig5=figure;
+cross_whisker_adaptation(fig5)
+toc
+>>>>>>> Stashed changes
