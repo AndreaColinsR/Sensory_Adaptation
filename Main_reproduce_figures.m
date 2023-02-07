@@ -39,14 +39,6 @@ xlim([0.5 4.5])
 box off
 
 % Figure 5
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
+
 fig5=figure;
 cross_whisker_adaptation(fig5)
-toc
->>>>>>> Stashed changes
-=======
-fig5=figure;
-cross_whisker_adaptation(fig5)
->>>>>>> 58cd314d1cf2e1fe1fb52cd155e4e60680de63f8
