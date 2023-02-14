@@ -1,5 +1,5 @@
 function variability_behaviour(fig1)
-folder=[{'Glu32_19092017H'};{'Glu32_21092017H'};{'Glu43_22122017H'};{'Glu35_10112017H'};{'Glu35_13112017H_1'};{'Glu35_13112017H_2'}];
+ff=dir('*.mat*');
 LT=[];
 NT=[];
 ITT=[];
@@ -15,38 +15,30 @@ ITT_incorrect=[];
 percentile_1=1;
 percentile_2=1;
 figure(fig1)
-for f=1:size(folder,1)
-    cd([folder{f} '/'])
-    info=xlsread('ledtrials.xlsx');
-    go_trials=find(info(:,7)==2);
-    idx_correct=info(go_trials,6)==1;
-    idx_incorrect=info(go_trials,6)==2;
-    
-    load('touches_whisker.mat','touches_whisker')
-    total_psth=ones(size(touches_whisker(:,:,1)));
-    load('newk1.mat','newk1')
-    k_c1=newk1*1.7/0.047; %%corrected by thickness
-    load('newk2.mat','newk2')
-    k_c2=newk2/0.047;
-    load('all_touches.mat','touches_matrix')
-    
-    % original line (all trials)
-    if f==3
+for f=1:size(ff,1)
+    load(ff(f).name,'Data')
+    Ntrials=size(Data.touch,1);
+    total_psth=ones(size(Data.touch));
+
+
+    if strcmp(ff(f).name,'Glu43_22122017H.mat')
 
         subplot(4,2,[ 3 5 7])
         
-        [nt_per_trial,inter_time_touch,length_touch]=touch_variability_behaviour(1:size(k_c2,1),1);
+        [nt_per_trial,inter_time_touch,length_touch]=touch_variability_behaviour(Data,1:Ntrials,1);
     else
-        [nt_per_trial,inter_time_touch,length_touch]=touch_variability_behaviour(1:size(k_c2,1),0);
+        [nt_per_trial,inter_time_touch,length_touch]=touch_variability_behaviour(Data,1:Ntrials,0);
     end
     
-    [~,~,~,~,~,~,~,~,~,~,deltak,~,~,~,~,~]=Tcurve_touches_dk(touches_matrix,touches_whisker,total_psth,k_c1,k_c2,0,4,0,percentile_1,percentile_2);
+    [~,~,~,~,~,~,~,~,~,~,deltak,~,~,~,~,~]=Tcurve_touches_dk(Data.touch,Data.touch_per_whisker,total_psth,Data.deltak_w1,Data.deltak_w2,0,4,0,percentile_1,percentile_2);
+    
     % only correct trials
-    [~,~,~,~,~,~,~,~,~,~,deltak_correct,~,~,~,~,~]=Tcurve_touches_dk(touches_matrix(idx_correct,:,:),touches_whisker(idx_correct,:,:),total_psth(idx_correct,:,:),k_c1(idx_correct,:,:),k_c2(idx_correct,:,:),0,4,0,percentile_1,percentile_2);
-    [nt_per_trial_correct,inter_time_touch_correct,length_touch_correct]=touch_variability_behaviour(idx_correct,0);
+    [~,~,~,~,~,~,~,~,~,~,deltak_correct,~,~,~,~,~]=Tcurve_touches_dk(Data.touch(Data.correct_trials,:,:),Data.touch_per_whisker(Data.correct_trials,:,:),total_psth(Data.correct_trials,:),Data.deltak_w1(Data.correct_trials,:),Data.deltak_w2(Data.correct_trials,:),0,4,0,percentile_1,percentile_2);
+    [nt_per_trial_correct,inter_time_touch_correct,length_touch_correct]=touch_variability_behaviour(Data,Data.correct_trials,0);
+    
     % only incorrect trials
-    [~,~,~,~,~,~,~,~,~,~,deltak_incorrect,~,~,~,~,~]=Tcurve_touches_dk(touches_matrix(idx_incorrect,:,:),touches_whisker(idx_incorrect,:,:),total_psth(idx_incorrect,:,:),k_c1(idx_incorrect,:,:),k_c2(idx_incorrect,:,:),0,4,0,percentile_1,percentile_2);
-    [nt_per_trial_incorrect,inter_time_touch_incorrect,length_touch_incorrect]=touch_variability_behaviour(idx_incorrect,0);
+    [~,~,~,~,~,~,~,~,~,~,deltak_incorrect,~,~,~,~,~]=Tcurve_touches_dk(Data.touch(Data.incorrect_trials,:,:),Data.touch_per_whisker(Data.incorrect_trials,:,:),total_psth(Data.incorrect_trials,:,:),Data.deltak_w1(Data.incorrect_trials,:,:),Data.deltak_w2(Data.incorrect_trials,:,:),0,4,0,percentile_1,percentile_2);
+    [nt_per_trial_incorrect,inter_time_touch_incorrect,length_touch_incorrect]=touch_variability_behaviour(Data,Data.incorrect_trials,0);
     
     
     
@@ -65,7 +57,6 @@ for f=1:size(folder,1)
     ITT_incorrect=[ITT_incorrect;inter_time_touch_incorrect'];
     
     clear inter_time_touch_correct length_touch_correct length_touch_incorrect nt_per_trial_correct nt_per_trial_incorrect length_touch nt_per_trial inter_time_touch deltak go_trials info idx_correct idx_incorrect deltak_correct deltak_incorrect
-    cd ..
     
 end
 

@@ -1,16 +1,11 @@
-function [nt_per_trial,inter_time_touch,length_touch]=touch_variability_behaviour(selected_trials,do_plot)
-load('touches_whisker.mat')
-tmp=touches_whisker(selected_trials,:,:);
-clear touches_whisker
-touches_whisker=tmp;
-ntrials=size(touches_whisker,1);
-load('newk1.mat')
- k_c1=newk1*1.7/0.047;
-        load('newk2.mat')
-        k_c2=newk2/0.047;
-%%%%Add the touches
+function [nt_per_trial,inter_time_touch,length_touch]=touch_variability_behaviour(Data,selected_trials,do_plot)
+touches_whisker=Data.touch_per_whisker(selected_trials,:,:);
 
-touches_m=round(ones(ntrials,3488,3))*255;
+ntrials=size(touches_whisker,1);
+k_c1=Data.deltak_w1(selected_trials,:);
+k_c2=Data.deltak_w2(selected_trials,:);
+
+touches_m=round(ones(ntrials,size(k_c1,2),3))*255;
 counter=1;
 nt_per_trial=zeros(ntrials,1);
 nt_per_trial_c1=zeros(ntrials,1);

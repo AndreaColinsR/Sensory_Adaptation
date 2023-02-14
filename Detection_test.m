@@ -1,9 +1,9 @@
-function [hit,hit3,fa,fa2,fa3]=Detection_test(total_psth,varargin)
+function [hit,hit3,fa,fa2,fa3]=Detection_test(Data,total_psth,varargin)
 %aim: compare detectability of latter touches with dectectability of
 
 idx=ones(size(total_psth,1),1)>0;
  
-if nargin==2
+if nargin==3
     idx=varargin{1};
 end
    
@@ -17,10 +17,14 @@ fa2=nan(1,nk);
 fa3=nan(1,nk);
 
 
-load('all_period_touches.mat','touches_matrix')
-period_touches=touches_matrix(idx,:,:);
-load('all_touches.mat','touches_matrix')
-touches_matrix=touches_matrix(idx,:,:);
+% load('all_period_touches.mat','touches_matrix')
+% period_touches=touches_matrix(idx,:,:);
+% load('all_touches.mat','touches_matrix')
+% touches_matrix=touches_matrix(idx,:,:);
+
+period_touches=Data.all_period_touch(idx,:,:);
+
+touches_matrix=Data.touch(idx,:,:);
 
 
 counter=1;

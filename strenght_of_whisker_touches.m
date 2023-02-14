@@ -1,6 +1,9 @@
 function strenght_of_whisker_touches(fig3)
-folder=[{'Glu32_19092017H'};{'Glu32_21092017H'};{'Glu43_22122017H'};{'Glu35_10112017H'};{'Glu35_13112017H_1'};{'Glu35_13112017H_1'}];
-nfolders=size(folder,1);
+%folder=[{'Glu32_19092017H'};{'Glu32_21092017H'};{'Glu43_22122017H'};{'Glu35_10112017H'};{'Glu35_13112017H_1'};{'Glu35_13112017H_1'}];
+
+
+ff=dir('*.mat*');
+nfolders=size(ff,1);
 percentile_1=0.95;
 percentile_2=0.95;
 
@@ -15,38 +18,39 @@ deltak_incorrect_1_all=[];
 deltak_correct_later_all=[];
 deltak_incorrect_later_all=[];
 figure(fig3)
-for f=1:nfolders
+for f=1:size(ff,1)
     
-    cd(folder{f})
-    info=xlsread('ledtrials.xlsx');
-    go_trials=find(info(:,7)==2);
-    idx_correct=info(go_trials,6)==1;
-    idx_incorrect=info(go_trials,6)==2;
+    %cd(folder{f})
+%     info=xlsread('ledtrials.xlsx');
+%     go_trials=find(info(:,7)==2);
+%     idx_correct=info(go_trials,6)==1;
+%     idx_incorrect=info(go_trials,6)==2;
+    load(ff(f).name,'Data')
     
+%     load('newk1.mat','newk1')
+%     k_c1=newk1*1.7/0.047;
+%     load('newk2.mat','newk2')
+%     k_c2=newk2/0.047;
     
-    load('newk1.mat','newk1')
-    k_c1=newk1*1.7/0.047;
-    load('newk2.mat','newk2')
-    k_c2=newk2/0.047;
-    
-    load('all_touches.mat','touches_matrix')
-    load('touches_whisker.mat','touches_whisker')
+    %load('all_touches.mat','touches_matrix')
+    %load('touches_whisker.mat','touches_whisker')
     
     %% select correct and incorrect trials
-    touches_matrix_correct=touches_matrix(idx_correct,:);
-    touches_whisker_correct=touches_whisker(idx_correct,:,:);
-    k_c1_correct=k_c1(idx_correct,:);
-    k_c2_correct=k_c2(idx_correct,:);
-    touches_matrix_incorrect=touches_matrix(idx_incorrect,:);
-    touches_whisker_incorrect=touches_whisker(idx_incorrect,:,:);
-    k_c1_incorrect=k_c1(idx_incorrect,:);
-    k_c2_incorrect=k_c2(idx_incorrect,:);
+    touches_matrix_correct=Data.touch(Data.correct_trials,:);
+    touches_whisker_correct=Data.touch_per_whisker(Data.correct_trials,:,:);
+    k_c1_correct=Data.deltak_w1(Data.correct_trials,:);
+    k_c2_correct=Data.deltak_w2(Data.correct_trials,:);
     
-    total_psth=touches_matrix*0+10;
-    total_psth_correct=touches_matrix*0+10;
-    total_psth_incorrect=touches_matrix*0+10;
+    touches_matrix_incorrect=Data.touch(Data.incorrect_trials,:);
+    touches_whisker_incorrect=Data.touch_per_whisker(Data.incorrect_trials,:,:);
+    k_c1_incorrect=Data.deltak_w1(Data.incorrect_trials,:);
+    k_c2_incorrect=Data.deltak_w2(Data.incorrect_trials,:);
     
-    [~,~,~,~,~,~,~,~,~,~,deltak,touch_idx,~,~,~,~]=Tcurve_touches_dk(touches_matrix,touches_whisker,total_psth,k_c1,k_c2,0,4,0,percentile_1,percentile_2);
+    total_psth=Data.touch*0+10;
+    total_psth_correct=Data.touch*0+10;
+    total_psth_incorrect=Data.touch*0+10;
+    
+    [~,~,~,~,~,~,~,~,~,~,deltak,touch_idx,~,~,~,~]=Tcurve_touches_dk(Data.touch,Data.touch_per_whisker,total_psth,Data.deltak_w1,Data.deltak_w2,0,4,0,percentile_1,percentile_2);
     [~,~,~,~,~,~,~,~,~,~,deltak_correct,touch_idx_correct,~,~,~,~]=Tcurve_touches_dk(touches_matrix_correct,touches_whisker_correct,total_psth_correct,k_c1_correct,k_c2_correct,0,4,0,percentile_1,percentile_2);
     [~,~,~,~,~,~,~,~,~,~,deltak_incorrect,touch_idx_incorrect,~,~,~,~]=Tcurve_touches_dk(touches_matrix_incorrect,touches_whisker_incorrect,total_psth_incorrect,k_c1_incorrect,k_c2_incorrect,0,4,0,percentile_1,percentile_2);
     
@@ -72,7 +76,7 @@ for f=1:nfolders
     
     
     clear deltak touch_idx
-    cd ..
+    %cd ..
     
 end
 

@@ -1,19 +1,13 @@
-function [distance_1,distance_2,distance_3,distance_4,distance,touch_idx,hit]=distance_base_from_matrix(idx_correct)
+function [distance_1,distance_2,distance_3,distance_4,distance,touch_idx,hit]=distance_base_from_matrix(Data,idx_correct)
 touch_idx=[];
 hit=[];
 counter=1;
-info=xlsread('ledtrials.xlsx');
-go_trials=find(info(:,7)==2);
-idx_correct_1=info(go_trials,6)==1;
 
-load('touches_whisker.mat','touches_whisker')
-load('distance_matrix.mat','distance_matrix')
+idx_correct_1=Data.correct_trials;
 
+touches_whisker=Data.touch_per_whisker(idx_correct,:,:);
+Data.distance_matrix=Data.distance_matrix(idx_correct,:,:);
 
-if numel(go_trials)>sum(idx_correct)
-    touches_whisker=touches_whisker(idx_correct,:,:);
-    distance_matrix=distance_matrix(idx_correct,:,:);
-end
 
 
 for trial=1:sum(idx_correct)
@@ -30,7 +24,7 @@ for trial=1:sum(idx_correct)
     for t=1:length(whisker_trial)
         if idx(t)<3478
             
-            distance(counter)=distance_matrix(trial,idx(t)+1,whisker_trial(t));
+            distance(counter)=Data.distance_matrix(trial,idx(t)+1,whisker_trial(t));
             touch_idx(counter)=t;
             hit(counter)=idx_correct_1(trial);
             counter=counter+1;

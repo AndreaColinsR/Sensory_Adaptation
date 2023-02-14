@@ -1,9 +1,9 @@
 function recovery_test(fig2)
-folder=[{'Glu32_19092017H'};{'Glu32_21092017H'};{'Glu43_22122017H'};{'Glu35_10112017H'};{'Glu35_13112017H_1'};{'Glu35_13112017H_2'}];
+%folder=[{'Glu32_19092017H'};{'Glu32_21092017H'};{'Glu43_22122017H'};{'Glu35_10112017H'};{'Glu35_13112017H_1'};{'Glu35_13112017H_2'}];
+ff=dir('*.mat*');
+%[~,txt]=xlsread('Adaptation_units_list.xlsx',1);
 
-[~,txt]=xlsread('Adaptation_units_list.xlsx',1);
-
-nunits=size(txt,1);
+nunits=33;
 
 AUC_1_correct=nan(1,nunits);
 AUC_later_correct=nan(1,nunits);
@@ -22,24 +22,24 @@ AUC_12=nan(1,nunits);
 AUC_later2=nan(1,nunits);
 counter=1;
 figure(fig2)
-for f=1:size(folder,1)
+for f=1:size(ff,1)
     
+    load(ff(f).name,'Data')
     
+    %cd(folder{f})
+%     info=xlsread('ledtrials.xlsx');
+%     go_trials=find(info(:,7)==2);
+%     idx_correct=info(go_trials,6)==1;
+%     idx_incorrect=info(go_trials,6)==2;
     
-    cd(folder{f})
-    info=xlsread('ledtrials.xlsx');
-    go_trials=find(info(:,7)==2);
-    idx_correct=info(go_trials,6)==1;
-    idx_incorrect=info(go_trials,6)==2;
+    %ff=dir('*neural_data_S*');
+    %load(ff(1).name)
     
-    ff=dir('*neural_data_S*');
-    load(ff(1).name)
-    
-    for unit=1:size(ff,1)
+    for i_unit=1:size(Data.unit,2)
         
-        if onthelist(txt,[folder{f} ff(unit).name])
-            load(ff(unit).name)
-            total_psth=psth;
+        %if onthelist(txt,[folder{f} ff(unit).name])
+        %    load(ff(i_unit).name)
+            total_psth=Data.unit(i_unit).spikes;
             
             if counter==3
                 do_extra_plot=1;
@@ -48,7 +48,7 @@ for f=1:size(folder,1)
             end
             
             
-            [hit_correct,hit3_correct,fa_correct,fa2_correct,fa3_correct]=Detection_test(total_psth(idx_correct,:),idx_correct);
+            [hit_correct,hit3_correct,fa_correct,fa2_correct,fa3_correct]=Detection_test(Data,total_psth(Data.correct_trials,:),Data.correct_trials);
             
             AUC_1_correct(counter)=trapz(fliplr([ 1 fa_correct]),fliplr([ 1 hit_correct]));
             AUC_later_correct(counter)=trapz(fliplr([ 1 fa3_correct]),fliplr([ 1 hit3_correct]));
@@ -66,7 +66,7 @@ for f=1:size(folder,1)
             end
             
             
-            [hit_incorrect,hit3_incorrect,fa_incorrect,fa2_incorrect,fa3_incorrect]=Detection_test(total_psth(idx_incorrect,:),idx_incorrect);
+            [hit_incorrect,hit3_incorrect,fa_incorrect,fa2_incorrect,fa3_incorrect]=Detection_test(Data,total_psth(Data.incorrect_trials,:),Data.incorrect_trials);
             
             AUC_1_incorrect(counter)=trapz(fliplr([ 1 fa_incorrect]),fliplr([ 1 hit_incorrect]));
             AUC_later_incorrect(counter)=trapz(fliplr([ 1 fa3_incorrect]),fliplr([ 1 hit3_incorrect]));
@@ -79,7 +79,7 @@ for f=1:size(folder,1)
                 hold off
             end
             
-            [hit,hit3,fa,fa2,fa3]=Detection_test(total_psth);
+            [hit,hit3,fa,fa2,fa3]=Detection_test(Data,total_psth);
             AUC_1(counter)=trapz(fliplr([ 1 fa]),fliplr([ 1 hit]));
             AUC_later(counter)=trapz(fliplr([ 1 fa3]),fliplr([ 1 hit3]));
             AUC_12(counter)=trapz(fliplr([ 1 fa2]),fliplr([ 1 hit]));
@@ -88,9 +88,9 @@ for f=1:size(folder,1)
             counter=counter+1;
             
             clear total_psth
-        end
+        %end
     end
-    cd ..
+    %cd ..
 end
 subplot(4,3,9)
 xlabel('False Alarm')
@@ -123,17 +123,4 @@ p(2)
 
 
 
-end
-
-function present=onthelist(txt,unit)
-
-for i=1:size(txt,1)
-    Index=strcmp([txt{i,:}],unit);
-    if Index==0
-        present=0;
-    else
-        present=1;
-        return
-    end
-end
 end
