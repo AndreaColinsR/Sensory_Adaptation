@@ -1,8 +1,5 @@
 function recovery_test(fig2)
-%folder=[{'Glu32_19092017H'};{'Glu32_21092017H'};{'Glu43_22122017H'};{'Glu35_10112017H'};{'Glu35_13112017H_1'};{'Glu35_13112017H_2'}];
 ff=dir('*.mat*');
-%[~,txt]=xlsread('Adaptation_units_list.xlsx',1);
-
 nunits=33;
 
 AUC_1_correct=nan(1,nunits);
@@ -111,16 +108,16 @@ hold on
 
 %% ANOVA test for figure 2D
 
-%% unbalanced
 y=[AUC_1_correct,AUC_1_incorrect,AUC_later_correct,AUC_later_incorrect]';
 correct=[ones(size(AUC_1_correct)),zeros(size(AUC_1_incorrect)),ones(size(AUC_later_correct)),zeros(size(AUC_later_incorrect))]';
 first_later=[ones(size(AUC_1_correct)),ones(size(AUC_1_incorrect)),ones(size(AUC_later_correct))*2,ones(size(AUC_later_incorrect))*2]';
 
-p = anovan(y,{correct,first_later});
-p(1)
-p(2)
+p = anovan(y,{correct,first_later},'display','off');
 
-
+disp('-----------------------------------')
+disp('Anova First vs later touch detection (AUC)')
+disp(['p-value Effect hit vs miss = ' num2str(p(1))])
+disp(['p-value Effect first vs later = ' num2str(p(2))])
 
 
 end

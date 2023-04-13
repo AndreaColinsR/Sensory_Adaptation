@@ -1,12 +1,13 @@
-%% The aim of this script is to reproduce the figures of the paper 
-%% This script should be run in the folder "Data", which contains one matlab file per recording with the behavioural and neural data.
-
+% %% The aim of this script is to reproduce the figures of the paper 
+% %% This script should be run in the folder "Data", which contains one matlab file per recording with the behavioural and neural data.
+% 
 close all
 clearvars
-tic
+rng('default') % for reproducibility
+% tic
 %% Figure 1
-fig1=figure;
-variability_behaviour(fig1)
+% fig1=figure;
+% variability_behaviour(fig1)
 
 %% Figure 2
 fig2=figure;
@@ -14,18 +15,19 @@ fig2=figure;
 recovery_test(fig2)
 
 
-%% Figure 3
+% Figure 3
 fig3=figure;
 strenght_of_whisker_touches(fig3)
 distance_base_all_sessions(fig3)
 
-%% Figure 4
+% %% Figure 4
+
 fig4=figure;
 [change_explained_by_adap,FR_unit]=all_Tcurves(fig4);
 gradual_adaptation(fig4)
 
 
-% Figure 2 panel C
+% % Figure 2 panel C
 figure(fig2)
 subplot(4,3,3)
 plot(1:4,FR_unit','Color',[0.5 0.5 0.5])
@@ -40,7 +42,7 @@ xlim([0.5 4.5])
 box off
 
 %% Figure 5
-
+tic
 fig5=figure;
 cross_whisker_adaptation(fig5)
 toc

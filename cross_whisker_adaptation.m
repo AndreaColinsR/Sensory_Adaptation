@@ -1,27 +1,43 @@
 function cross_whisker_adaptation(fig5)
 av_unit=1;
 ff=dir('*.mat*');
+Nsessions=size(ff,1);
 
-percentile_1=0.95;
-percentile_2=0.95;
+
+percentile_FR=0.95;
 window=100;
 nunits=33;
+
 first_FR=nan(nunits,2);
 h_pred1=nan(nunits,1);
 p_pred1=nan(nunits,1);
 WSAI=nan(nunits,1);
+samples=zeros(Nsessions,1);
 
-samples=zeros(size(ff,1),1);
+
+%% Define population FR per mouse
+mouse_id=zeros(Nsessions,1);
+
+for f=1:Nsessions
+    
+mouse_id(f)=str2double(ff(f).name(4:5));
+end
+
+mouse_number=unique(mouse_id);
+WSAI_mouse=cell(numel(mouse_number),1);
+
+
 
 subplot(1,2,1)
 hold on
-for f=1:size(ff,1)
+for f=1:Nsessions
     
     
     load(ff(f).name,'Data')
     newk=Data.deltak_w1;
     newk(:,:,2)=Data.deltak_w2;
     
+    this_mouse=str2double(ff(f).name(4:5))==mouse_number;
     
     for i_unit=1:size(Data.unit,2)
         
@@ -77,7 +93,7 @@ for f=1:size(ff,1)
         
         %% Calculate prediction
         
-        [~,~,~,~,~,~,~,~,~,~,deltaktotal,touch_idxtotal,FRtotal,~,~,whisker]=Tcurve_touches_dk(Data.touch,Data.touch_per_whisker,Data.unit(i_unit).spikes,newk(:,:,1),newk(:,:,2),0,4,2,percentile_1,percentile_2);
+        [~,~,~,~,~,~,~,~,~,~,deltaktotal,touch_idxtotal,FRtotal,~,~,whisker]=Tcurve_touches_dk(Data.touch,Data.touch_per_whisker,Data.unit(i_unit).spikes,newk(:,:,1),newk(:,:,2),0,4,2,percentile_FR,percentile_FR);
         deltaktotal=abs(deltaktotal);
         
         deltaktotal(touch_idxtotal<3)=[];
@@ -103,12 +119,12 @@ for f=1:size(ff,1)
         
         if any(whisker_test==1)
             
-            [~,~,pw1]=plotTCurve(deltaktotal(whisker==1),FRtotal(whisker==1),'',4,0.95);
+            [~,~,pw1]=plotTCurve(deltaktotal(whisker==1),FRtotal(whisker==1),'',4,percentile_FR);
             fw1 = polyval(pw1,dk2(whisker_test==1));
         end
         
         if any(whisker_test==2)
-            [~,~,pw2]=plotTCurve(deltaktotal(whisker==2),FRtotal(whisker==2),'',4,0.95);
+            [~,~,pw2]=plotTCurve(deltaktotal(whisker==2),FRtotal(whisker==2),'',4,percentile_FR);
             fw2 = polyval(pw2,dk2(whisker_test==2));
         end
         %% the prediction from the tuning curves for N>=3
@@ -123,7 +139,7 @@ for f=1:size(ff,1)
         %% Compute Whisker Specific Adaptation Index  as in Musall et al.
         
         WSAI(av_unit)=(mean(FR1_1)-mean(f1))/(mean(FR1_1)+mean(f1));
-        
+        WSAI_mouse{this_mouse}= [WSAI_mouse{this_mouse};WSAI(av_unit)];
         
         if h_pred1(av_unit)>0
             
@@ -147,16 +163,22 @@ for f=1:size(ff,1)
     clear dk2 whisker_test
     
     
-    %cd ..
-    
-    
 end
-positive_fraction=sum(h_pred1)/(av_unit-1);
+
+
 disp(['samples=' num2str(mean(samples)) '+-' num2str(std(samples))])
-mean_p_all_units=mean(p_pred1)
-mean_p_positive=mean(p_pred1(h_pred1>0))
+
+
+%% test that FR is higher than predicted across neurons
+[~,p_total]=ttest2(first_FR(:,1),first_FR(:,2));
+% remove outlier and test again
+[~,idx_max]=max(first_FR(:,2));
+first_FR_outlier=first_FR;
+first_FR_outlier(idx_max,:)=[];
+[~,p_total_outlier]=ttest2(first_FR_outlier(:,1),first_FR_outlier(:,2));
 
 figure(fig5)
+
 subplot(1,2,1)
 errorbar([1 2],mean(first_FR,'omitnan'),std(first_FR,'omitnan'),'.-m')
 xlim([0.8 2.2])
@@ -164,7 +186,8 @@ box off
 ylabel('Firing Rate [spikes/touch]')
 xticks([1 2])
 xticklabels({'Predicted unadapted state','Test response'})
-
+text(1, 3, ['p-value (all) =' num2str(p_total,'%.2e')])
+text(1, 2.5, ['p-value (w/o outlier) =' num2str(p_total_outlier,'%.2e')])
 
 subplot(1,2,2)
 WSAI(WSAI==-1)=[];
@@ -177,9 +200,23 @@ ylim([0 4])
 xlabel('Whisker-Specific Adaptation Index')
 ylabel('Number of units')
 
+
 %% stats
 %sum(musall_style>0)/numel(musall_style)
-[h_musall,p_musall]=ttest(WSAI)
-p = signrank(WSAI)
+[~,p_musall]=ttest(WSAI);
+p = signrank(WSAI);
+text(-1, 3.5, ['p-value (signrank)= ' num2str(p)])
+text(-1, 3, ['p-value (ttest)= ' num2str(p_musall)])
+positive_I_ratio=sum(WSAI>0)/numel(WSAI)
 
+disp('')
+disp('')
+disp('-----------------------------------------')
+disp('Median I  per mouse')
+
+for im=1:numel(mouse_number)
+    
+disp(['Mouse ' num2str(im) ' =' num2str(median(WSAI_mouse{im}))])
+
+end
 end

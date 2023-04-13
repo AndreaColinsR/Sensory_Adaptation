@@ -36,6 +36,7 @@ for f=1:nfolders
         first_later=[first_later;touch_idx(touch_idx==1)';touch_idx(touch_idx~=1)'*0];
         correct=[correct;hit_tmp(touch_idx==1)';hit_tmp(touch_idx~=1)'];
     end
+    
     %[sum(hit_tmp'==1) sum(hit_tmp'==0 & touch_idx'==1)  sum(touch_idx'==1) sum(touch_idx'~=1)]
     %p = anovan(y_tmp',{hit_tmp',touch_idx'==1});
     
@@ -59,14 +60,24 @@ box off
 
 %ANOVA test for figure 3
 y=y*0.047; %convert pixels to mm
-idx=y<1;
+% unbalanced
+p = anovan(y,{correct,first_later},'display','off');
 
-p = anovan(y(idx),{correct(idx),first_later(idx)});
-p(1)
-p(2)
+disp(' ')
+disp('-----------------------------------')
+disp('Unbalanced anova First vs later touches speed')
+disp(['p-value Effect hit vs miss = ' num2str(p(1))])
+disp(['p-value Effect first vs later = ' num2str(p(2))])
 
+% balanced
+nsample=sum(correct==0 & first_later==1);
+correct_1=y(correct==1 & first_later==1);
+incorrect_1=y(correct==0 & first_later==1);
+correct_later=y(correct==1 & first_later==0);
+incorrect_later=y(correct==0 & first_later==0);
+balanced_anova(correct_1,incorrect_1,correct_later,incorrect_later,nsample)
 
-proportion_correct_incorrect=mean(y(correct==1))/mean(y(correct==0))
-proportion_first_later=mean(y(first_later~=1))/mean(y(first_later==1))
+% proportion_correct_incorrect=mean(y(correct==1))/mean(y(correct==0))
+% proportion_first_later=mean(y(first_later~=1))/mean(y(first_later==1))
 
 end

@@ -2,6 +2,7 @@ function [FR_touch,FR_touch_correct,FR_touch_incorrect]=all_Tcurves_correct_inco
 counter=0;
 av_unit=0;
 ff=dir('*.mat*');
+Nsessions=size(ff,1);
 
 percentile_1=0.95;
 percentile_2=0.95;
@@ -11,10 +12,24 @@ FR_incorrect_1_all=[];
 FR_correct_later_all=[];
 FR_incorrect_later_all=[];
 
-for f=1:size(ff,1)
+Nsamples_tuning_curve=nan(Nsessions,2);
+
+%% Define population FR per mouse
+mouse_id=zeros(Nsessions,1);
+
+for f=1:Nsessions
+mouse_id(f)=str2double(ff(f).name(4:5));
+end
+
+mouse_number=unique(mouse_id);
+FR_mouse=cell(numel(mouse_number),1);
+adapt_mouse=cell(numel(mouse_number),1);
+
+
+for f=1:Nsessions
     
     load(ff(f).name,'Data')
-    
+    this_mouse=str2double(ff(f).name(4:5))==mouse_number;
 
     %% select correct and incorrect trials
     touches_matrix_correct=Data.touch(Data.correct_trials,:);
@@ -55,48 +70,51 @@ for f=1:size(ff,1)
     raster_plot(spikes_correct,touch_idx_correct,[1 2 4 5])
     raster_plot(spikes_incorrect,touch_idx_incorrect,[7 8 10 11])
     end
-
+    
+    
+    
     
     [lambda1,~]=Tcurve_touches_dk_cross_val(Data.touch,Data.touch_per_whisker,total_psth,Data.deltak_w1,Data.deltak_w2,0,4);
     
     if ~isnan(p1_incorrect)
         av_unit=av_unit+1;
         
-        spikes_incorrect_1(av_unit)=sum(FR_correct(touch_idx_correct==1));
-        coeff1(av_unit,:)=p1;
-        coeff2(av_unit,:)=p2;
+%         spikes_incorrect_1(av_unit)=sum(FR_correct(touch_idx_correct==1));
+%         coeff1(av_unit,:)=p1;
+%         coeff2(av_unit,:)=p2;
         
         
-        f1_correct = polyval(p1_correct,x1_correct);
-        f2_correct = polyval(p2_correct,x1_correct);
-        f1_incorrect = polyval(p1_incorrect,x1_incorrect);
-        f2_incorrect = polyval(p2_incorrect,x1_incorrect);
-        pos_slope(av_unit)=p_all(1);
+%         f1_correct = polyval(p1_correct,x1_correct);
+%         f2_correct = polyval(p2_correct,x1_correct);
+%         f1_incorrect = polyval(p1_incorrect,x1_incorrect);
+%         f2_incorrect = polyval(p2_incorrect,x1_incorrect);
+%         pos_slope(av_unit)=p_all(1);
+%         
+%         
+%         slope_first(av_unit,:)=[p1_correct(1) p1_incorrect(1)];
+%         slope_later(av_unit,:)=[p2_correct(1) p2_incorrect(1)];
+%         intercept_first(av_unit,:)=[p1_correct(2), p1_incorrect(2)];
+%         intercept_later(av_unit,:)=[p2_correct(2), p2_incorrect(2)];
         
-        
-        slope_first(av_unit,:)=[p1_correct(1) p1_incorrect(1)];
-        slope_later(av_unit,:)=[p2_correct(1) p2_incorrect(1)];
-        intercept_first(av_unit,:)=[p1_correct(2), p1_incorrect(2)];
-        intercept_later(av_unit,:)=[p2_correct(2), p2_incorrect(2)];
-        
+        Nsamples_tuning_curve(f,:)=[sum(touch_idx==1) sum(touch_idx>1)];
         
         FR1_all=simspikes(deltak(touch_idx==1)',p2,1); %first touch with mixed tunning cuve
         FR2=simspikes(deltak(touch_idx>1)',p2,1); %later touches with corresponding tuning curve
         FR2_all=simspikes(deltak(touch_idx>1)',p_all,1); %later touches with mixed tuning curve
         
         
-        ratioFR(av_unit,:)=[mean(FR(touch_idx==1)'./lambda1) 1/nanmean(FR(touch_idx==1)'./FR1_all(:)')];
+        %ratioFR(av_unit,:)=[mean(FR(touch_idx==1)'./lambda1) 1/nanmean(FR(touch_idx==1)'./FR1_all(:)')];
         % response to first touch is X% higher than predicted
-        ratioFRb(av_unit,:)=nanmean(FR(touch_idx==1)'./FR1_all(:)');
+        %ratioFRb(av_unit,:)=nanmean(FR(touch_idx==1)'./FR1_all(:)');
         
         %% test if FR from first touch is higher than prediction
         [hFR(av_unit),pvalFR(av_unit)] = ttest(FR(touch_idx==1)',FR1_all(:)','Tail','right');
         
         
-        error1(av_unit)=mean(abs(FR(touch_idx==1)-lambda1(:)));
-        error2(av_unit)=mean(abs(FR(touch_idx==1)-FR1_all(:)));
+        %error1(av_unit)=mean(abs(FR(touch_idx==1)-lambda1(:)));
+        %error2(av_unit)=mean(abs(FR(touch_idx==1)-FR1_all(:)));
         
-        ratioFR2(av_unit,:)=[1 mean(FR2(:))/mean(FR2_all(:))];
+        %ratioFR2(av_unit,:)=[1 mean(FR2(:))/mean(FR2_all(:))];
         
         
         FR_correct_incorrect_1(av_unit,:)=[mean(FR_correct(touch_idx_correct==1)) mean(FR_incorrect(touch_idx_incorrect==1))];
@@ -113,20 +131,15 @@ for f=1:size(ff,1)
         
         [h_atte(av_unit),pval_atte(av_unit)]=ttest2(FR(touch_idx==1),FR(touch_idx>1));
         
-        
-        if h_atte(av_unit) %(mean(FR(touch_idx==1))-mean(FR(touch_idx>1)))>0
             change_explained_by_adap(av_unit)=min([(median(FR(touch_idx==1)-FR1_all(:)))/(median(FR(touch_idx==1))-median(FR(touch_idx>1))) 1e6]);
             
-            %change_explained_by_adap(av_unit)=(1-ratioFR(av_unit,2))/(1-(mean(FR(touch_idx>3))/mean(FR(touch_idx==1))));
-            
-        else
-            change_explained_by_adap(av_unit)=NaN;
-        end
+            adapt_mouse{this_mouse}= [adapt_mouse{this_mouse};change_explained_by_adap(av_unit)];
         
         FR_touch(av_unit,:)=[mean(FR(touch_idx==1)) mean(FR(touch_idx==2)) mean(FR(touch_idx==3)) mean(FR(touch_idx>3))]/mean(FR(touch_idx==1));
         FR_touch_correct(av_unit,:)=[mean(FR_correct(touch_idx_correct==1)) mean(FR_correct(touch_idx_correct==2)) mean(FR_correct(touch_idx_correct==3)) mean(FR_correct(touch_idx_correct>3))]/mean(FR_correct(touch_idx_correct==1));
         FR_touch_incorrect(av_unit,:)=[mean(FR_incorrect(touch_idx_incorrect==1)) mean(FR_incorrect(touch_idx_incorrect==2)) mean(FR_incorrect(touch_idx_incorrect==3)) mean(FR_incorrect(touch_idx_incorrect>3))]/mean(FR_incorrect(touch_idx_incorrect==1));
         
+        FR_mouse{this_mouse}= [FR_mouse{this_mouse};FR_touch(av_unit,:)];
         
         if p2(1)<p1(1)
             counter=counter+1;
@@ -159,42 +172,41 @@ plot([0.8 1.8],FR_correct_incorrect_1,'.r')
 plot([1.2 2.2],FR_correct_incorrect_later,'.k')
 
 
-[h_FR_1,pFR_1] = ttest2(FR_correct_1_all,(FR_incorrect_1_all));
-[h_FR_later,pFR_later] = ttest2(FR_correct_later_all,FR_incorrect_later_all);
+% [h_FR_1,pFR_1] = ttest2(FR_correct_1_all,(FR_incorrect_1_all));
+% [h_FR_later,pFR_later] = ttest2(FR_correct_later_all,FR_incorrect_later_all);
 
 %
-[h_FR_correct,pFR_correct] = ttest2(FR_correct_1_all,FR_correct_later_all);
-[h_FR_incorrect,pFR_incorrect] = ttest2(FR_incorrect_1_all,FR_incorrect_later_all);
+% [h_FR_correct,pFR_correct] = ttest2(FR_correct_1_all,FR_correct_later_all);
+% [h_FR_incorrect,pFR_incorrect] = ttest2(FR_incorrect_1_all,FR_incorrect_later_all);
 %pause
 
-%%ANOVA Fig 2C (FRs)
+%% ANOVA Fig 2C (FRs)
 %% unbalanced
 correct=[ones(size(FR_correct_1_all));zeros(size(FR_incorrect_1_all));ones(size(FR_correct_later_all));zeros(size(FR_incorrect_later_all))];
 first_later=[ones(size(FR_correct_1_all));ones(size(FR_incorrect_1_all));ones(size(FR_correct_later_all))*2;ones(size(FR_incorrect_later_all))*2];
 y=[FR_correct_1_all;FR_incorrect_1_all;FR_correct_later_all;FR_incorrect_later_all];
-p = anovan(y,{correct,first_later});
-p(1)
-p(2)
 
-mean([FR_incorrect_1_all;FR_incorrect_later_all])/mean([FR_correct_1_all;FR_correct_later_all])
-%pause
+
+p = anovan(y,{correct,first_later},'display','off');
+
+disp('-----------------------------------')
+disp('Unbalanced anova First vs later responses (FR)')
+disp(['p-value Effect hit vs miss = ' num2str(p(1))])
+disp(['p-value Effect first vs later = ' num2str(p(2))])
+
+%% balanced
+nsample=size(FR_incorrect_1_all,1);
+balanced_anova(FR_correct_1_all,FR_incorrect_1_all,FR_correct_later_all,FR_incorrect_later_all,nsample)
+
 
 %%
-%balanced
-% nsample=size(FR_incorrect_1_all,1);
-% correct=[ones(nsample,1);zeros(nsample,1);ones(nsample,1);zeros(nsample,1)];
-% first_later=[ones(nsample,1);ones(nsample,1);ones(nsample,1)*2;ones(nsample,1)*2];
-% for i=1:100
-% y=[FR_correct_1_all(randperm(numel(FR_correct_1_all),nsample));...
-%     FR_incorrect_1_all(randperm(numel(FR_incorrect_1_all),nsample));...
-%     FR_correct_later_all((randperm(numel(FR_correct_later_all),nsample)));...
-%     FR_incorrect_later_all((randperm(numel(FR_incorrect_later_all),nsample)))];
-% p(:,i) = anovan(y,{correct,first_later},'display','off');
-% clear y
-% end
-%
-%  [mean(p(1,:)) std(p(1,:))]
-%  [mean(p(2,:)) std(p(2,:))]
+% fraction between Responses in miss trials and hit trials.
+disp(' ')
+disp('-----------------------------------')
+miss_hit_ratio=mean([FR_incorrect_1_all;FR_incorrect_later_all])/mean([FR_correct_1_all;FR_correct_later_all]);
+disp(['Ration responses miss/hit = ' num2str(miss_hit_ratio)])
+
+disp('-----------------------------------')
 
 %%%%% ttest FR
 %errorbar([1 2],mean(FR_correct_incorrect_1),std(FR_correct_incorrect_1),'-m')
@@ -204,28 +216,48 @@ mean([FR_incorrect_1_all;FR_incorrect_later_all])/mean([FR_correct_1_all;FR_corr
 
 
 
-[h1,p1] = ttest(FR_touch(:,2),1,'Tail','left');
-[h2,p2] = ttest2(FR_touch(:,2),FR_touch(:,3),'Tail','right');
-[h3,p3] = ttest2(FR_touch(:,3),FR_touch(:,4),'Tail','right');
+% [h1,p1] = ttest(FR_touch(:,2),1,'Tail','left');
+% [h2,p2] = ttest2(FR_touch(:,2),FR_touch(:,3),'Tail','right');
+% [h3,p3] = ttest2(FR_touch(:,3),FR_touch(:,4),'Tail','right');
 
-% how many units show adaptation?
-lower=sum(hFR);
-%mean(pvalFR(hFR>0))
 
-%subplot(3,3,9)
-% FO=fit(X',Y','poly1');
-% plot([0 max(X)], FO.p1*[0 max(X)]+FO.p2,'k')
-% response to first touch is X% higher than predicted
-% mean(ratioFRb(ratioFRb<10))
-% mean(pval_atte(h_atte>0))
-% clear deltak touch_idx
-% min(spikes_incorrect_1)
+disp('')
+disp('-----------------------------------------')
+disp('Change due to adaptation (alpha) whole population')
+disp(num2str(mean(change_explained_by_adap)))
 
-% figure
-% histogram(change_explained_by_adap,0:0.1:1.5)
-change_explained_by_adap
-mean(change_explained_by_adap)
-std(change_explained_by_adap)
+
+disp('')
+disp('')
+disp('-----------------------------------------')
+disp('Change due to adaptation (alpha) per mouse')
+
+for im=1:numel(mouse_number)
+    
+disp(['Mouse ' num2str(im) ' =' num2str(mean(adapt_mouse{im}))])
+
+end
+
+
+%% Report decrease in FR per mouse
+disp('')
+disp('')
+disp('-----------------------------------------')
+disp('Normalised FR of second touch (FR2/FR1)')
+for im=1:numel(mouse_number)
+    
+disp(['Mouse ' num2str(im) ' =' num2str(mean(FR_mouse{im}(:,2),1))])
+
+end
+
+
+%% Number of touches for each tuning curve
+disp('')
+disp('')
+disp('-----------------------------------------')
+disp('Average number of touches for each tuning curve')
+disp([' First touch = ' num2str(mean(Nsamples_tuning_curve(:,1))) '  Later touches = ' num2str(mean(Nsamples_tuning_curve(:,2)))])
+
 end
 
 function FR=simspikes(x,p,Nsim)

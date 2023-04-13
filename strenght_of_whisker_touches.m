@@ -1,6 +1,4 @@
 function strenght_of_whisker_touches(fig3)
-%folder=[{'Glu32_19092017H'};{'Glu32_21092017H'};{'Glu43_22122017H'};{'Glu35_10112017H'};{'Glu35_13112017H_1'};{'Glu35_13112017H_1'}];
-
 
 ff=dir('*.mat*');
 nfolders=size(ff,1);
@@ -20,20 +18,9 @@ deltak_incorrect_later_all=[];
 figure(fig3)
 for f=1:size(ff,1)
     
-    %cd(folder{f})
-%     info=xlsread('ledtrials.xlsx');
-%     go_trials=find(info(:,7)==2);
-%     idx_correct=info(go_trials,6)==1;
-%     idx_incorrect=info(go_trials,6)==2;
+
     load(ff(f).name,'Data')
     
-%     load('newk1.mat','newk1')
-%     k_c1=newk1*1.7/0.047;
-%     load('newk2.mat','newk2')
-%     k_c2=newk2/0.047;
-    
-    %load('all_touches.mat','touches_matrix')
-    %load('touches_whisker.mat','touches_whisker')
     
     %% select correct and incorrect trials
     touches_matrix_correct=Data.touch(Data.correct_trials,:);
@@ -92,10 +79,9 @@ errorbar(1:4,mean(deltak_touch,1),std(deltak_touch,[],1),'k')
 errorbar(1:4,mean(deltak_touch_correct,1),std(deltak_touch_correct,[],1),'g')
 errorbar(1:4,mean(deltak_touch_incorrect,1),std(deltak_touch_incorrect,[],1),'r')
 
-[hd1,pd1] = ttest2(deltak_touch(:,1),deltak_touch(:,2));
-[hd2,pd2] = ttest2(deltak_touch(:,2),deltak_touch(:,3));
-[hd3,pd3] = ttest2(deltak_touch(:,3),deltak_touch(:,4));
-
+% [hd1,pd1] = ttest2(deltak_touch(:,1),deltak_touch(:,2));
+% [hd2,pd2] = ttest2(deltak_touch(:,2),deltak_touch(:,3));
+% [hd3,pd3] = ttest2(deltak_touch(:,3),deltak_touch(:,4));
 
 
 subplot(4,3,9)
@@ -113,34 +99,21 @@ xticks([1 2])
 xticklabels({'Hit','Miss'})
 
 
-%mixing all trials
-[h_dk_1,pdk_1] = ttest2(deltak_correct_1_all,deltak_incorrect_1_all);
-[h_dk_later,pdk_later] = ttest2(deltak_correct_later_all,deltak_incorrect_later_all);
-
-[h_dk_correct,pdk_correct] = ttest2(deltak_correct_1_all,deltak_correct_later_all);
-[h_dk_incorrect,pdk_incorrect] = ttest2(deltak_incorrect_1_all,deltak_incorrect_later_all);
-
 %%%% ANOVA figure 3
 %% unbalanced (raw)
-
+disp('Delta kappa comparison')
 correct=[ones(size(deltak_correct_1_all));zeros(size(deltak_incorrect_1_all));ones(size(deltak_correct_later_all));zeros(size(deltak_incorrect_later_all))];
 first_later=[ones(size(deltak_correct_1_all));ones(size(deltak_incorrect_1_all));ones(size(deltak_correct_later_all))*2;ones(size(deltak_incorrect_later_all))*2];
-y=[deltak_correct_1_all;deltak_incorrect_1_all;deltak_correct_later_all;deltak_incorrect_later_all];
-p = anovan(y,{correct,first_later});
-p(1)
-p(2)
-%% balanced
-%%minimun number of samples per group: size(deltak_incorrect_1_all)
-% for i=1:100
-% nsample=size(deltak_incorrect_1_all,1);
-% correct=[ones(nsample,1);zeros(nsample,1);ones(nsample,1);zeros(nsample,1)];
-% first_later=[ones(nsample,1);ones(nsample,1);ones(nsample,1)*2;ones(nsample,1)*2];
-% y=[deltak_correct_1_all(randperm(numel(deltak_correct_1_all),nsample));...
-%     deltak_incorrect_1_all(randperm(numel(deltak_incorrect_1_all),nsample));...
-%     deltak_correct_later_all((randperm(numel(deltak_correct_later_all),nsample)));...
-%     deltak_incorrect_later_all((randperm(numel(deltak_incorrect_later_all),nsample)))];
-% p(:,i) = anovan(y,{correct,first_later},'display','off');
-%
-% end
 
+y=[deltak_correct_1_all;deltak_incorrect_1_all;deltak_correct_later_all;deltak_incorrect_later_all];
+p = anovan(y,{correct,first_later},'display','off');
+
+disp('-----------------------------------')
+disp('Unbalanced anova First vs later Delta Kappa')
+disp(['p-value Effect hit vs miss = ' num2str(p(1))])
+disp(['p-value Effect first vs later = ' num2str(p(2))])
+
+%% balanced
+nsample=size(deltak_incorrect_1_all,1);
+balanced_anova(deltak_correct_1_all,deltak_incorrect_1_all,deltak_correct_later_all,deltak_incorrect_later_all,nsample)
 end
