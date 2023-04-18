@@ -5,7 +5,6 @@ k_hor(:,:,1)=k_c1;
 k_hor(:,:,2)=k_c2;
 window=100;
 window_ad=600;
-normalised=1;
 %N_first=5;
 N_latter=N_first;
 percentile_1=1;

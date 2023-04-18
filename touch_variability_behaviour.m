@@ -1,4 +1,23 @@
 function [nt_per_trial,inter_time_touch,length_touch]=touch_variability_behaviour(Data,selected_trials,do_plot)
+%% touch_variability_behaviour calculates the most important touch parameters for the selected trials in Data
+% INPUTS
+% Data: data structure containing the behavioural and neural data
+%
+% selected_trials: binary array indicating the trials selected for this
+% analysis
+%
+% do_plot: 1-plot example trial (dk and touch epochs)
+%          0-do not plot
+%
+% OUTPUTS
+%
+% nt_per_trial: number of touches per trial
+%
+% inter_time_touch: time between the start of two consecutive touches [ms]
+%
+% length of touch: time that the whisker is in contact with the pole [ms]
+% 
+
 touches_whisker=Data.touch_per_whisker(selected_trials,:,:);
 
 ntrials=size(touches_whisker,1);
@@ -14,7 +33,7 @@ counter2=1;
 for i=1:ntrials
     
     
-    %%for c1
+    %% for c1
     touches_c1=touches_whisker(i,:,1);
     not_touch=~touches_c1;
     touches_m(i,:,1)=not_touch.*255;
@@ -40,7 +59,7 @@ for i=1:ntrials
         counter=counter+1;
     end
     
-    %%for c2
+    %% for c2
     
     touches_c2=touches_whisker(i,:,2);
     not_touch=~touches_c2;
@@ -73,6 +92,7 @@ for i=1:ntrials
     touches_all=sum(touches_whisker(i,:,:),3);
     
     touch_offset=find(diff(touches_all)<0);
+    
     for j=1:numel(touch_offset)
         if touch_offset(j)<3488 && (touches_all(touch_offset(j)+1)==0)
             new_onset=find(diff(touches_all(touch_offset(j):end))>0,1,'First');
@@ -88,14 +108,15 @@ for i=1:ntrials
     end
     
     if do_plot && i==9
+        
     subplot(4,2,1)
     image([0 size(touches_m,2)],[-0.03 0.02],touches_m(i,:,:),'AlphaData',0.2)
     hold on 
     plot(k_c1(i,:),'b')
     plot(k_c2(i,:),'g')
-    title(num2str(i))
     ylim([-0.03 0.02])
     set(gca,'YDir','normal')
+    legend('C1','C2')
     hold off
     box off
     end

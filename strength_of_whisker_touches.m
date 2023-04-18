@@ -1,4 +1,10 @@
-function strenght_of_whisker_touches(fig3)
+function strength_of_whisker_touches(fig3)
+%% strength_of_whisker_touches plots 
+% 1. Delta kappa per touch number divided into hit and miss trials 
+% 2. Delta kappa per session divided into first/ later and hit/miss trials
+
+% this function also does ANOVA (balanced and unbalanced) for delta kappa for first/ later and
+% hit/miss trials conditions
 
 ff=dir('*.mat*');
 nfolders=size(ff,1);
@@ -15,7 +21,9 @@ deltak_correct_1_all=[];
 deltak_incorrect_1_all=[];
 deltak_correct_later_all=[];
 deltak_incorrect_later_all=[];
+
 figure(fig3)
+
 for f=1:size(ff,1)
     
 
@@ -37,9 +45,9 @@ for f=1:size(ff,1)
     total_psth_correct=Data.touch*0+10;
     total_psth_incorrect=Data.touch*0+10;
     
-    [~,~,~,~,~,~,~,~,~,~,deltak,touch_idx,~,~,~,~]=Tcurve_touches_dk(Data.touch,Data.touch_per_whisker,total_psth,Data.deltak_w1,Data.deltak_w2,0,4,0,percentile_1,percentile_2);
-    [~,~,~,~,~,~,~,~,~,~,deltak_correct,touch_idx_correct,~,~,~,~]=Tcurve_touches_dk(touches_matrix_correct,touches_whisker_correct,total_psth_correct,k_c1_correct,k_c2_correct,0,4,0,percentile_1,percentile_2);
-    [~,~,~,~,~,~,~,~,~,~,deltak_incorrect,touch_idx_incorrect,~,~,~,~]=Tcurve_touches_dk(touches_matrix_incorrect,touches_whisker_incorrect,total_psth_incorrect,k_c1_incorrect,k_c2_incorrect,0,4,0,percentile_1,percentile_2);
+    [~,~,~,~,~,~,deltak,touch_idx]=Tcurve_touches_dk(Data.touch,Data.touch_per_whisker,total_psth,Data.deltak_w1,Data.deltak_w2,0,4,0,percentile_1,percentile_2);
+    [~,~,~,~,~,~,deltak_correct,touch_idx_correct]=Tcurve_touches_dk(touches_matrix_correct,touches_whisker_correct,total_psth_correct,k_c1_correct,k_c2_correct,0,4,0,percentile_1,percentile_2);
+    [~,~,~,~,~,~,deltak_incorrect,touch_idx_incorrect]=Tcurve_touches_dk(touches_matrix_incorrect,touches_whisker_incorrect,total_psth_incorrect,k_c1_incorrect,k_c2_incorrect,0,4,0,percentile_1,percentile_2);
     
 
     deltak=abs(deltak);
@@ -63,8 +71,7 @@ for f=1:size(ff,1)
     
     
     clear deltak touch_idx
-    %cd ..
-    
+
 end
 
 subplot(4,3,7)
@@ -78,10 +85,6 @@ xlim([0.5 4.5])
 errorbar(1:4,mean(deltak_touch,1),std(deltak_touch,[],1),'k')
 errorbar(1:4,mean(deltak_touch_correct,1),std(deltak_touch_correct,[],1),'g')
 errorbar(1:4,mean(deltak_touch_incorrect,1),std(deltak_touch_incorrect,[],1),'r')
-
-% [hd1,pd1] = ttest2(deltak_touch(:,1),deltak_touch(:,2));
-% [hd2,pd2] = ttest2(deltak_touch(:,2),deltak_touch(:,3));
-% [hd3,pd3] = ttest2(deltak_touch(:,3),deltak_touch(:,4));
 
 
 subplot(4,3,9)

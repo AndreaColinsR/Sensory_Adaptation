@@ -3,8 +3,7 @@ do_extra_plot=0;
 counter=0;
 counter2=1;
 av_unit=0;
-percentile_1=0.95;
-percentile_2=0.95;
+percentile=0.95;
 NpointsTcurve=4;
 ff=dir('*.mat*');
 
@@ -13,13 +12,19 @@ FR_touch=nan(nunits,4);
 h_atte=nan(nunits,1);
 coeff_first=nan(nunits,2);
 coeff_later=nan(nunits,2);
-
+hw=nan(nunits,1);
+pval_atte=nan(nunits,1);
+pvalFR=nan(nunits,1);
+hFR=nan(nunits,1);
+xk=nan(nunits,2);
+xr=nan(nunits,2);
+change_explained_by_adap=nan(nunits,1);
 
 %% Define population FR per mouse
 mouse_id=zeros(size(ff,1),1);
 
 for f=1:size(ff,1)
-mouse_id(f)=str2double(ff(f).name(4:5));
+    mouse_id(f)=str2double(ff(f).name(4:5));
 end
 
 mouse_number=unique(mouse_id);
@@ -31,7 +36,7 @@ for f=1:size(ff,1)
     this_mouse=str2double(ff(f).name(4:5))==mouse_number;
     
     
-    total_psth=zeros(size(Data.touch));
+    %total_psth=zeros(size(Data.touch));
     for i_unit=1:size(Data.unit,2)
         
         total_psth=Data.unit(i_unit).spikes;
@@ -43,13 +48,44 @@ for f=1:size(ff,1)
         
         clear deltak touch_idx FR
         
-        [x1,p1,~,p2,x1_norm,p1_norm,x2_norm,p2_norm,x_all,p_all,deltak,touch_idx,FR,~,FR_prev,whisker]=Tcurve_touches_dk(Data.touch,Data.touch_per_whisker,total_psth,Data.deltak_w1,Data.deltak_w2,do_extra_plot,NpointsTcurve,0,percentile_1,percentile_2);
+        [x1,p1,~,p2,~,~,deltak,touch_idx,FR,~,FR_prev,whisker]=Tcurve_touches_dk(Data.touch,Data.touch_per_whisker,total_psth,Data.deltak_w1,Data.deltak_w2,do_extra_plot,NpointsTcurve,0,percentile,percentile);
         deltak=abs(deltak);
         
-        [lambda1,~]=Tcurve_touches_dk_cross_val(Data.touch,Data.touch_per_whisker,total_psth,Data.deltak_w1,Data.deltak_w2,0,4);
+        [lambda1,~]=Tcurve_touches_dk_cross_val(Data.touch,Data.touch_per_whisker,total_psth,Data.deltak_w1,Data.deltak_w2,0,NpointsTcurve);
         
         if ~isnan(x1)
             av_unit=av_unit+1;
+            
+            %% testing whisker preference
+            % does this neuron show a preference for a whisker
+            hw(av_unit)=ttest2(FR((whisker==1 & touch_idx>4)),FR((whisker==2 & touch_idx>4)));
+            
+            if hw(av_unit)
+                subplot(3,3,9)
+                hold on
+                errorbar([1 2],[mean(FR((touch_idx==1) & (whisker==1))),mean(FR((touch_idx==1) & (whisker==2)))],[std(FR((touch_idx==1) & (whisker==1))),std(FR((touch_idx==1) & (whisker==2)))])
+                
+                %choose the prefered whisker
+                %[~,pref_w]=max([mean(FR((whisker==1 & touch_idx>4))),mean(FR((whisker==2 & touch_idx>4)))])
+                
+                % choose the whisker that touches more times
+                [~,pref_w]=max([sum(whisker==1 & touch_idx>4),sum((whisker==2 & touch_idx>4))]);
+                
+                
+                selected_touch=touch_idx==1 & whisker==pref_w;
+                nsamples_1=sum(selected_touch);
+                [~,x1,p1]=plotTCurve(deltak(selected_touch),FR(selected_touch),'',NpointsTcurve,percentile);
+                
+                selected_touch=touch_idx>1 & whisker==pref_w;
+                nsamples_2=sum(selected_touch);
+                [~,~,p2]=plotTCurve(deltak(selected_touch),FR(selected_touch),'',NpointsTcurve,percentile);
+                
+                FR=FR(whisker==pref_w);
+                deltak=deltak(whisker==pref_w);
+                touch_idx=touch_idx(whisker==pref_w);
+                %whisker=whisker(whisker==pref_w);
+                
+            end
             
             coeff_first(av_unit,:)=p1;
             coeff_later(av_unit,:)=p2;
@@ -61,8 +97,8 @@ for f=1:size(ff,1)
             if strcmp('Glu35_10112017H.mat',ff(f).name) && counter2==1
                 
                 subplot(2,4,2)
-                nsamples=plotTCurve(deltak(touch_idx>1),FR(touch_idx>1),'k',NpointsTcurve,percentile_2);
-                nsamples=plotTCurve(deltak(touch_idx==1),FR(touch_idx==1),'r',NpointsTcurve,percentile_1);
+                nsamples=plotTCurve(deltak(touch_idx>1),FR(touch_idx>1),'k',NpointsTcurve,percentile);
+                nsamples=plotTCurve(deltak(touch_idx==1),FR(touch_idx==1),'r',NpointsTcurve,percentile);
                 
                 xlabel('|\Delta \kappa| [1/mm]')
                 ylabel('FR [spikes/touch]')
@@ -87,16 +123,17 @@ for f=1:size(ff,1)
             subplot(2,4,6)
             plot(p2(2),p1(2),'ob')
             hold on
+            
             intercept_mouse{this_mouse}=[intercept_mouse{this_mouse}; [p1(2) p2(2)]];
-
-        
             
+            
+            % check here for preference
             FR1_all=simspikes(deltak(touch_idx==1)',p2,1); %first touch with later touches tuning cuve
-            %FR2=simspikes(deltak(touch_idx>1)',p2,1); %later touches with corresponding tuning curve
-            
+            % check here for preference
             xk(av_unit,:)=[mean(FR(touch_idx==1)),mean(FR1_all(:))];
             xr(av_unit,:)=[mean(FR(touch_idx==1)),mean(lambda1(:))];
             
+            % check here for preference
             subplot(2,4,4)
             hold on
             plot(mean(FR(touch_idx==1)),mean(lambda1(:)),'or')
@@ -104,28 +141,15 @@ for f=1:size(ff,1)
             
             
             % response to first touch is X% higher than predicted
-            ratioFRb(av_unit,:)=nanmean(FR(touch_idx==1)'./FR1_all(:)');
+            %ratioFRb(av_unit)=mean(FR(touch_idx==1)'./FR1_all(:)','omitnan');
             
             %% test if FR from first touch is higher than prediction
             [hFR(av_unit),pvalFR(av_unit)] = ttest(FR(touch_idx==1)',FR1_all(:)','Tail','right');
-            %FR_decreased(av_unit)=100-100*mean(FR(touch_idx>1))/mean(FR(touch_idx==1));
+      
             
             
+            %% t-test first vs later responses
             
-            error1(av_unit)=mean(abs(FR(touch_idx==1)-lambda1(:)));
-            error2(av_unit)=mean(abs(FR(touch_idx==1)-FR1_all(:)));
-            
-            
-            %% testing whisker preference
-            subplot(3,3,9)
-            hold on
-            errorbar([1 2],[mean(FR((touch_idx==1) & (whisker==1))),mean(FR((touch_idx==1) & (whisker==2)))],[std(FR((touch_idx==1) & (whisker==1))),std(FR((touch_idx==1) & (whisker==2)))])
-           
-            hw(av_unit)=ttest2(FR((whisker==1 & touch_idx>5)),FR((whisker==2 & touch_idx>5)));
-            
-            %mean(FR(touch_idx==2))
-            %(mean(FR(touch_idx==1))-mean(FR(touch_idx==2)))
-            %change_explained_by_adap(av_unit)=(1-ratioFR(av_unit,2))/(1-(mean(FR(touch_idx>1))/mean(FR(touch_idx==1))))
             [h_atte(av_unit),pval_atte(av_unit)]=ttest2(FR(touch_idx==1),FR(touch_idx>1));
             
             
@@ -166,7 +190,6 @@ for f=1:size(ff,1)
     clear deltak touch_idx
     
 end
-
 
 figure(fig4)
 subplot(2,4,5)
@@ -236,23 +259,15 @@ errorbar(mean(xr(:,1)),mean(xr(:,2)),std(xr(:,2)),'vertical','.r')
 
 
 %Are the reponses to touch significantly weaker over time?
-% 
+%
 % [h1,p1] = ttest(FR_touch(:,2),1,'Tail','left');
 % [h2,p2] = ttest2(FR_touch(:,2),FR_touch(:,3),'Tail','right');
 % [h3,p3] = ttest2(FR_touch(:,3),FR_touch(:,4),'Tail','right');
 
-disp('how many units show adaptation?')
-lower=sum(hFR)
-%mean(pvalFR(hFR>0))
+disp('How many units do show adaptation?')
+disp(num2str(sum(hFR,'omitnan')))
 disp('-------------------------------')
 
-% response to first touch is X% higher than predicted
-% mean(ratioFRb(ratioFRb<10))
-% mean(pval_atte(h_atte>0))
-%clear deltak touch_idx
-
-%% whisker preference
-%sum(hw)
 
 disp('')
 disp('')
@@ -262,9 +277,12 @@ disp(['Whole population  = ' num2str(mean(coeff_later(:,2)./coeff_first(:,2),'om
 
 for im=1:numel(mouse_number)
     
-disp(['Mouse ' num2str(im) ' =' num2str(mean(intercept_mouse{im}(:,2)./intercept_mouse{im}(:,1),1))])
-
+    disp(['Mouse ' num2str(im) ' =' num2str(mean(intercept_mouse{im}(:,2)./intercept_mouse{im}(:,1),1))])
+    
 end
+
+%% whisker preference
+sum(hw,'omitnan')
 end
 
 function FR=simspikes(x,p,Nsim)

@@ -1,4 +1,11 @@
 function gradual_adaptation(fig4)
+%% gradual_adaptation plots 
+% 1. The ratio between the predicted FR from the tuning curve for each touch number and the actual response to those touches.
+% 2. the intercept of the tuning curves from the tuning curves for each
+% touch number
+
+
+
 figure(fig4)
 av_unit=0;
 ff=dir('*.mat*');
@@ -8,7 +15,6 @@ for f=1:size(ff,1)
 
     load(ff(f).name,'Data')
     
-    %total_psth=zeros(size(Data.touch));
     for i_unit=1:size(Data.unit,2)
         
             total_psth=Data.unit(i_unit).spikes;

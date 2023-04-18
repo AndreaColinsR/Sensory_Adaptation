@@ -1,4 +1,8 @@
 function distance_base_all_sessions(fig3)
+%% distance_base_all_sessions plots 
+% the speed of the whisker at touch onset and performs ANOVA for first/ later and
+% hit/miss trials conditions
+
 ff=dir('*.mat*');
 nfolders=size(ff,1);
 correct=[];

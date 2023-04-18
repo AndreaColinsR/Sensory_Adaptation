@@ -6,8 +6,8 @@ clearvars
 rng('default') % for reproducibility
 % tic
 %% Figure 1
-% fig1=figure;
-% variability_behaviour(fig1)
+fig1=figure;
+variability_behaviour(fig1)
 
 %% Figure 2
 fig2=figure;
@@ -15,12 +15,12 @@ fig2=figure;
 recovery_test(fig2)
 
 
-% Figure 3
+%% Figure 3
 fig3=figure;
-strenght_of_whisker_touches(fig3)
+strength_of_whisker_touches(fig3)
 distance_base_all_sessions(fig3)
 
-% %% Figure 4
+%% Figure 4
 
 fig4=figure;
 [change_explained_by_adap,FR_unit]=all_Tcurves(fig4);

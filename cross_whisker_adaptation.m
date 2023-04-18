@@ -93,7 +93,7 @@ for f=1:Nsessions
         
         %% Calculate prediction
         
-        [~,~,~,~,~,~,~,~,~,~,deltaktotal,touch_idxtotal,FRtotal,~,~,whisker]=Tcurve_touches_dk(Data.touch,Data.touch_per_whisker,Data.unit(i_unit).spikes,newk(:,:,1),newk(:,:,2),0,4,2,percentile_FR,percentile_FR);
+        [~,~,~,~,~,~,deltaktotal,touch_idxtotal,FRtotal,~,~,whisker]=Tcurve_touches_dk(Data.touch,Data.touch_per_whisker,Data.unit(i_unit).spikes,newk(:,:,1),newk(:,:,2),0,4,2,percentile_FR,percentile_FR);
         deltaktotal=abs(deltaktotal);
         
         deltaktotal(touch_idxtotal<3)=[];
