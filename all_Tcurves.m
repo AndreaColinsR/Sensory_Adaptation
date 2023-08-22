@@ -316,7 +316,7 @@ for im=1:numel(mouse_number)
 end
 
 %% Whisker preference
-sum(hw,'omitnan')
+%sum(hw,'omitnan')
 end
 
 function FR=simspikes(x,p,Nsim)
