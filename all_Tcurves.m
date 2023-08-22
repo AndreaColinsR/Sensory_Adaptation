@@ -60,32 +60,32 @@ for f=1:size(ff,1)
             % does this neuron show a preference for a whisker
             hw(av_unit)=ttest2(FR((whisker==1 & touch_idx>4)),FR((whisker==2 & touch_idx>4)));
             
-            if hw(av_unit)
-                subplot(3,3,9)
-                hold on
-                errorbar([1 2],[mean(FR((touch_idx==1) & (whisker==1))),mean(FR((touch_idx==1) & (whisker==2)))],[std(FR((touch_idx==1) & (whisker==1))),std(FR((touch_idx==1) & (whisker==2)))])
-                
-                %choose the prefered whisker
-                %[~,pref_w]=max([mean(FR((whisker==1 & touch_idx>4))),mean(FR((whisker==2 & touch_idx>4)))])
-                
-                % choose the whisker that touches more times
-                [~,pref_w]=max([sum(whisker==1 & touch_idx>4),sum((whisker==2 & touch_idx>4))]);
-                
-                
-                selected_touch=touch_idx==1 & whisker==pref_w;
-                nsamples_1=sum(selected_touch);
-                [~,x1,p1]=plotTCurve(deltak(selected_touch),FR(selected_touch),'',NpointsTcurve,percentile);
-                
-                selected_touch=touch_idx>1 & whisker==pref_w;
-                nsamples_2=sum(selected_touch);
-                [~,~,p2]=plotTCurve(deltak(selected_touch),FR(selected_touch),'',NpointsTcurve,percentile);
-                
-                FR=FR(whisker==pref_w);
-                deltak=deltak(whisker==pref_w);
-                touch_idx=touch_idx(whisker==pref_w);
-                %whisker=whisker(whisker==pref_w);
-                
-            end
+%             if hw(av_unit)
+%                 subplot(3,3,9)
+%                 hold on
+%                 errorbar([1 2],[mean(FR((touch_idx==1) & (whisker==1))),mean(FR((touch_idx==1) & (whisker==2)))],[std(FR((touch_idx==1) & (whisker==1))),std(FR((touch_idx==1) & (whisker==2)))])
+%                 
+%                 %choose the prefered whisker
+%                 %[~,pref_w]=max([mean(FR((whisker==1 & touch_idx>4))),mean(FR((whisker==2 & touch_idx>4)))])
+%                 
+%                 % choose the whisker that touches more times
+%                 [~,pref_w]=max([sum(whisker==1 & touch_idx>4),sum((whisker==2 & touch_idx>4))]);
+%                 
+%                 
+%                 selected_touch=touch_idx==1 & whisker==pref_w;
+%                 nsamples_1=sum(selected_touch);
+%                 [~,x1,p1]=plotTCurve(deltak(selected_touch),FR(selected_touch),'',NpointsTcurve,percentile);
+%                 
+%                 selected_touch=touch_idx>1 & whisker==pref_w;
+%                 nsamples_2=sum(selected_touch);
+%                 [~,~,p2]=plotTCurve(deltak(selected_touch),FR(selected_touch),'',NpointsTcurve,percentile);
+%                 
+%                 FR=FR(whisker==pref_w);
+%                 deltak=deltak(whisker==pref_w);
+%                 touch_idx=touch_idx(whisker==pref_w);
+%                 %whisker=whisker(whisker==pref_w);
+%                 
+%             end
             
             coeff_first(av_unit,:)=p1;
             coeff_later(av_unit,:)=p2;
@@ -281,7 +281,7 @@ for im=1:numel(mouse_number)
     
 end
 
-%% whisker preference
+%% Whisker preference
 sum(hw,'omitnan')
 end
 
