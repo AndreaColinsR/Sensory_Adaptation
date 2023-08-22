@@ -30,7 +30,6 @@ end
 mouse_number=unique(mouse_id);
 intercept_mouse=cell(numel(mouse_number),1);
 slope_mouse=cell(numel(mouse_number),1);
-RatioFR_mouse=cell(numel(mouse_number),1);
 
 for f=1:size(ff,1)
     
@@ -272,13 +271,12 @@ errorbar(mean(xr(:,1)),mean(xr(:,2)),std(xr(:,2)),'vertical','.r')
 disp('How many units do show adaptation?')
 disp(num2str(sum(hFR,'omitnan')))
 disp('-------------------------------')
-disp('How much is the decrease of FR given the same stimulus?')
-disp(['Whole population =' num2str(100*mean(ratioFRb,'omitnan')) '%'])
+disp('How much is the decrease of FR given the same stimulus')
 
-disp()
+disp(num2str(mean(ratioFRb,'omitnan')))
 for im=1:numel(mouse_number)
     
-    disp(['Mouse ' num2str(im) ' =' num2str(100*mean(RatioFR_mouse{im})) '%'])
+    disp(['Mouse ' num2str(im) ' =' num2str(100*sum(intercept_mouse{im}(:,2)<=intercept_mouse{im}(:,1))./size(intercept_mouse{im}(:,1),1)) '%'])
     
 end
 
