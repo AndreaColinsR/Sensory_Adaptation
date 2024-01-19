@@ -24,6 +24,9 @@ ntrials=size(touches_whisker,1);
 k_c1=Data.deltak_w1(selected_trials,:);
 k_c2=Data.deltak_w2(selected_trials,:);
 
+a_c1=Data.azimuth_w1(selected_trials,:);
+a_c2=Data.azimuth_w2(selected_trials,:);
+
 touches_m=round(ones(ntrials,size(k_c1,2),3))*255;
 counter=1;
 nt_per_trial=zeros(ntrials,1);
@@ -119,15 +122,28 @@ for i=1:ntrials
     legend('C1','C2')
     hold off
     box off
+
+    subplot(4,2,3)
+    hold on
+    image([0 size(touches_m,2)],[0 100],touches_m(i,:,:),'AlphaData',0.2)
+    plot(a_c1(i,:),'b')
+    plot(a_c2(i,:),'g')
+    set(gca,'YDir','normal')
+    legend('C1','C2')
+    ylim([20 100])
+    xlim([0 3488])
+    hold off
+    box off
+
     end
 end
 
 if do_plot
 
-    subplot(4,2,[3 5 7])
+    subplot(4,2,[5 7])
     image(touches_m,'AlphaData',0.2)
-    xlim([500 3488])
-    xlabel('Time [ms]')
+    xlim([0 3488])
+    xlabel('Time from trial start [ms]')
     ylabel('Trials')
     set(gca, 'YDir','normal')
     ylim([0 84])

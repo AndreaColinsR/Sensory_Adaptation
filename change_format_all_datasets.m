@@ -31,6 +31,14 @@ Data.deltak_w1=newk1*1.7/0.047;
 load('newk2.mat')
 Data.deltak_w2=newk2/0.047;
 
+
+load('kinematicsgoc1.mat')
+Data.azimuth_w1=azimuth;
+
+
+load('kinematicsgoc2.mat')
+Data.azimuth_w2=azimuth;
+
 load('all_period_touches.mat')
 Data.all_period_touch=touches_matrix;
 
@@ -41,6 +49,9 @@ Data.touch=touches_matrix;
 % this is touch independent of the whisker
 load('touches_whisker.mat')
 Data.touch_per_whisker=touches_whisker;
+
+% load('angle.mat')
+% Data.touch_per_whisker=touches_whisker;
 
 
 % correct and incorrect trials
@@ -54,6 +65,9 @@ Data.incorrect_trials=zeros(size(go_trial,1),1);
 
 Data.correct_trials(trial_output(go_trial,1)==1)=1;
 Data.incorrect_trials(trial_output(go_trial,1)==2)=1;
+
+Data.correct_trials=Data.correct_trials==1;
+Data.incorrect_trials=Data.incorrect_trials==1;
 
 % check that this is the same than what we have before
 info=xlsread('ledtrials.xlsx');

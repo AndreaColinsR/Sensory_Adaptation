@@ -275,7 +275,7 @@ disp('-------------------------------')
 disp('How much is the decrease of FR given the same stimulus?')
 disp(['Whole population =' num2str(100*mean(ratioFRb,'omitnan')) '%'])
 
-disp()
+disp('')
 for im=1:numel(mouse_number)
     
     disp(['Mouse ' num2str(im) ' =' num2str(100*mean(RatioFR_mouse{im})) '%'])
