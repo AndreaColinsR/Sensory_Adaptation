@@ -137,4 +137,10 @@ box off
 disp(['Mean number of touches hit trials ' num2str(mean(NT_correct)) '+-' num2str(std(NT_correct))])
 %average number of touches in miss trials
 disp(['Mean number of touches miss trials ' num2str(mean(NT_incorrect)) '+-' num2str(std(NT_incorrect))])
+
+[~,p_value]=ttest2(NT_correct,NT_incorrect);
+
+t_value=(mean(NT_correct)-mean(NT_incorrect))/(std(NT_incorrect)^2/numel(NT_incorrect)+std(NT_correct)^2/numel(NT_correct));
+
+disp(['Difference between number of touches (hit vs miss): t-value =' num2str(t_value,'%.2f') ', p-value = ' num2str(p_value,'%.2e')])
 end

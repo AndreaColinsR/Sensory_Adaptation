@@ -72,10 +72,32 @@ for f=1:Nsessions
     [~,p1,~,p2,~,~,deltak,touch_idx,FR,~,~,whisker]=Tcurve_touches_dk(Data.touch,Data.touch_per_whisker,total_psth,Data.deltak_w1,Data.deltak_w2,0,NpointsTcurve,0,percentile,percentile);
     [~,~,~,~,~,~,~,touch_idx_correct,FR_correct,~,~,~,spikes_correct]=Tcurve_touches_dk(touches_matrix_correct,touches_whisker_correct,total_psth_correct,k_c1_correct,k_c2_correct,0,NpointsTcurve,0,percentile,percentile);
     [~,p1_incorrect,~,~,~,~,~,touch_idx_incorrect,FR_incorrect,~,~,~,spikes_incorrect]=Tcurve_touches_dk(touches_matrix_incorrect,touches_whisker_incorrect,total_psth_incorrect,k_c1_incorrect,k_c2_incorrect,0,NpointsTcurve,0,percentile,percentile);
-    
-    
     deltak=abs(deltak);
+
+
+    %% adding latencies analyses
+    [Lat,touch_lat,prev_FR]=Latencies(Data.touch,Data.touch_per_whisker,total_psth,1,2);
+
+    %% Are initial latencies different for different touch numbers?
+    [~,pvalLat]=ttest2(Lat(touch_lat==1),Lat(touch_lat>=3));
+    disp(['p-value initial latencies (first touch vs late touch) = ' num2str(pvalLat,'%.4f')])
+
+    [~,pvalFRLat]=ttest2(prev_FR(touch_lat==1),prev_FR(touch_lat>=3));
+
+    %disp([' corr latency vs FR pre touch =' num2str(corr(Lat',prev_FR'))])
+
+    %errorbar([1 4],[mean(prev_FR(touch_lat==1)),mean(prev_FR(touch_lat>=4))],[std(prev_FR(touch_lat==1)),std(prev_FR(touch_lat>=4))])
+    %disp(['p-value FR prev (first touch vs late touch) = ' num2str(pvalFRLat,'%.4f')])
     
+    %% Latencies early vs late trials
+    %Ntrials=size(Data.touch,1);
+    %Early_trials=1:floor(Ntrials/2);
+    %Late_trials=floor(Ntrials/2)+1:Ntrials;
+    %[Lat_early,touch_lat_early]=Latencies(Data.touch(Early_trials,:),Data.touch_per_whisker(Early_trials,:,:),total_psth(Early_trials,:),0,2);
+    
+    %[Lat_late,touch_lat_late]=Latencies(Data.touch(Late_trials,:),Data.touch_per_whisker(Late_trials,:,:),total_psth(Late_trials,:),0,2);
+    %[~,pvalLat]=ttest2(Lat_early,Lat_late);
+    %disp(['p-value early vs late trials latencies = ' num2str(pvalLat,'%.4f')])
     
     %% plot example raster plot
     if strcmp('Glu32_19092017H.mat',ff(f).name)
