@@ -19,6 +19,9 @@ hFR=nan(nunits,1);
 xk=nan(nunits,2);
 xr=nan(nunits,2);
 change_explained_by_adap=nan(nunits,1);
+corr_LatFR=nan(nunits,1);
+Lat_itouch=nan(nunits,4);
+
 
 %% Define population FR per mouse
 mouse_id=zeros(size(ff,1),1);
@@ -30,6 +33,8 @@ end
 mouse_number=unique(mouse_id);
 intercept_mouse=cell(numel(mouse_number),1);
 slope_mouse=cell(numel(mouse_number),1);
+RatioFR_mouse=cell(numel(mouse_number),1);
+
 
 for f=1:size(ff,1)
     
@@ -54,8 +59,15 @@ for f=1:size(ff,1)
         
         [lambda1,~]=Tcurve_touches_dk_cross_val(Data.touch,Data.touch_per_whisker,total_psth,Data.deltak_w1,Data.deltak_w2,0,NpointsTcurve);
         
+        
+
         if ~isnan(x1)
             av_unit=av_unit+1;
+
+             % Latencies
+            [Lat,touch_lat,prev_FR]=Latencies(Data.touch,Data.touch_per_whisker,total_psth,0,8);
+            corr_LatFR(av_unit)=corr(Lat',prev_FR');
+            Lat_itouch(av_unit,:)=[median(Lat(touch_lat==1)) median(Lat(touch_lat==2)) median(Lat(touch_lat==3)) median(Lat(touch_lat>=4))];
             
             %% testing whisker preference
             % does this neuron show a preference for a whisker
@@ -196,6 +208,23 @@ for f=1:size(ff,1)
 end
 
 figure(fig4)
+%% latencies
+Lat_isnan(Lat_itouch)
+subplot(2,4,8)
+hold on 
+plot(1:4,Lat_itouch','Color',[0.5 0.5 0.5])
+errorbar(1:4,mean(Lat_itouch,'omitnan'),std(Lat_itouch,'omitnan'),'Color','k')
+xlabel('Touch number')
+ylabel('Latency [ms]')
+
+[~,p_latency2]=ttest2(Lat_itouch(:,1),Lat_itouch(:,2));
+[~,p_latency3]=ttest2(Lat_itouch(:,1),Lat_itouch(:,3));
+[~,p_latency4]=ttest2(Lat_itouch(:,1),Lat_itouch(:,4));
+
+disp(['p-value latencies first vs 2nd touch = ' num2str(p_latency2)])
+disp(['p-value latencies first vs 2nd touch = ' num2str(p_latency3)])
+disp(['p-value latencies first vs 2nd touch = ' num2str(p_latency4)])
+
 subplot(2,4,5)
 hold on
 plot([-25 160],[-25 160],'-b','Linewidth',2)
@@ -271,12 +300,13 @@ errorbar(mean(xr(:,1)),mean(xr(:,2)),std(xr(:,2)),'vertical','.r')
 disp('How many units do show adaptation?')
 disp(num2str(sum(hFR,'omitnan')))
 disp('-------------------------------')
-disp('How much is the decrease of FR given the same stimulus')
+disp('How much is the decrease of FR given the same stimulus?')
+disp(['Whole population =' num2str(100*mean(ratioFRb,'omitnan')) '%'])
 
-disp(num2str(mean(ratioFRb,'omitnan')))
+disp('')
 for im=1:numel(mouse_number)
     
-    disp(['Mouse ' num2str(im) ' =' num2str(100*sum(intercept_mouse{im}(:,2)<=intercept_mouse{im}(:,1))./size(intercept_mouse{im}(:,1),1)) '%'])
+    disp(['Mouse ' num2str(im) ' =' num2str(100*mean(RatioFR_mouse{im})) '%'])
     
 end
 
@@ -314,7 +344,7 @@ for im=1:numel(mouse_number)
 end
 
 %% Whisker preference
-sum(hw,'omitnan')
+%sum(hw,'omitnan')
 end
 
 function FR=simspikes(x,p,Nsim)

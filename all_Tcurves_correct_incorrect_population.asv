@@ -107,7 +107,7 @@ for f=1:Nsessions
     
     
     if ~isnan(p1_incorrect)
-         [peakW(f,:),peak_latency(f,:)]=peak_width([spikes_correct;spikes_incorrect],[touch_idx_correct,touch_idx_incorrect]);
+         []=peak_width(spikes,touch_idx);
         %% testing whisker preference
         % does this neuron show a preference for a whisker
 %         hw(av_unit)=ttest2(FR((whisker==1 & touch_idx>4)),FR((whisker==2 & touch_idx>4)));
@@ -182,8 +182,6 @@ for f=1:Nsessions
     
 end
 
-peakW(f)
-peak_latency(f)
 
 subplot(4,3,6)
 hold on

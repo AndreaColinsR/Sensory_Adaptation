@@ -87,18 +87,19 @@ latencies_touch_std=[std(latencies(touch_idx==1)) std(latencies(touch_idx==2)) s
 if do_plot
        
     subplot(7,5,subplot_idx)
-    %hold on
-    %errorbar([1 4],latencies_touch([1 4]),latencies_touch_std([1 4]))
-    %xlabel('Touch Number')
-    %ylabel('Latencies [ms]')
-    %box off 
+    hold on
+    errorbar([1:4],latencies_touch([1:4]),latencies_touch_std([1:4]),'Color',[0.5 0.5 0.5])
+    xlabel('Touch Number')
+    ylabel('Latencies [ms]')
+    box off 
 
     % hold on
     % plot(latencies,FR_prev_tmp,'.')
     % xlabel('Touch Number')
     % ylabel('Latencies [ms]')
     % box off 
-    disp([' corr latency vs FR pre touch =' num2str(corr(latencies',FR_prev_tmp'))])
+    
+    %disp([' corr latency vs FR pre touch =' num2str(corr(latencies',FR_prev_tmp'))])
     
 end
 

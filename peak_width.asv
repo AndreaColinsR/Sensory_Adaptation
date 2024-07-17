@@ -1,0 +1,14 @@
+function peakW=peak_width(spikes,touch_idx)
+
+peakW
+boxcar=[zeros(1,5) ones(1,5)];
+
+for itouch=1:4
+filteredFR1=conv(mean(spikes(touch_idx==i_touch,:)),boxcar,'same');
+
+[MaxF,idx_max]=max(filteredFR1);
+end_peak=find(filteredFR1(idx_max:end)<=MaxF/2,1,'first');
+start_peak=idx_max-find(filteredFR1(1:idx_max)<=MaxF/2,1,'last');
+peakW=end_peak+start_peak;
+
+end
