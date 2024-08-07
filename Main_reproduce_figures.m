@@ -7,7 +7,7 @@ rng('default') % for reproducibility
 % tic
 %% Figure 1
 fig1=figure;
-%variability_behaviour(fig1)
+variability_behaviour(fig1)
 
 %% Figure 2
 fig2=figure;

@@ -14,15 +14,19 @@ for itouch=1:4
     end
 
     [MaxF,idx_max]=max(filteredFR(1:end));
-    end_peak=find(filteredFR(idx_max:end)<=MaxF/2,1,'first');
+    end_peak=find(filteredFR(idx_max:end)<=MaxF/2.5,1,'first');
     if isempty(end_peak)
         end_peak=nan;
     end
-    start_peak=idx_max-find(filteredFR(1:idx_max)<=MaxF/2,1,'last');
+    start_peak=idx_max-find(filteredFR(1:idx_max)<=MaxF/2.5,1,'last');
 
     if isempty(start_peak)
         start_peak=nan;
     end
+    
+    subplot(2,3,6)
+    hold on
+    plot(filteredFR)
 
     peakW(itouch)=end_peak+start_peak;
     peak_latency(itouch)=idx_max;

@@ -188,6 +188,7 @@ xticks([1 2])
 xticklabels({'Predicted unadapted state','Test response'})
 text(1, 3, ['p-value (all) =' num2str(p_total,'%.2e')])
 text(1, 2.5, ['p-value (w/o outlier) =' num2str(p_total_outlier,'%.2e')])
+set(gca, 'YScale', 'log')
 
 subplot(1,2,2)
 WSAI(WSAI==-1)=[];

@@ -90,13 +90,13 @@ for f=1:Nsessions
     %disp(['p-value FR prev (first touch vs late touch) = ' num2str(pvalFRLat,'%.4f')])
     
     %% Latencies early vs late trials
-    %Ntrials=size(Data.touch,1);
-    %Early_trials=1:floor(Ntrials/2);
-    %Late_trials=floor(Ntrials/2)+1:Ntrials;
-    %[Lat_early,touch_lat_early]=Latencies(Data.touch(Early_trials,:),Data.touch_per_whisker(Early_trials,:,:),total_psth(Early_trials,:),0,2);
+    Ntrials=size(Data.touch,1);
+    Early_trials=1:floor(Ntrials/2);
+    Late_trials=floor(Ntrials/2)+1:Ntrials;
+    [Lat_early,touch_lat_early]=Latencies(Data.touch(Early_trials,:),Data.touch_per_whisker(Early_trials,:,:),total_psth(Early_trials,:),0,2);
     
-    %[Lat_late,touch_lat_late]=Latencies(Data.touch(Late_trials,:),Data.touch_per_whisker(Late_trials,:,:),total_psth(Late_trials,:),0,2);
-    %[~,pvalLat]=ttest2(Lat_early,Lat_late);
+    [Lat_late,touch_lat_late]=Latencies(Data.touch(Late_trials,:),Data.touch_per_whisker(Late_trials,:,:),total_psth(Late_trials,:),0,2);
+    [~,pvalLat]=ttest2(Lat_early,Lat_late);
     %disp(['p-value early vs late trials latencies = ' num2str(pvalLat,'%.4f')])
     
     %% plot example raster plot
@@ -181,9 +181,9 @@ for f=1:Nsessions
     clear touch_idx
     
 end
-
-peakW(f)
-peak_latency(f)
+    peakwlater=peakW(:,2:end);
+    peakwlater(isnan(peakwlater))=[];
+ [~,pvalue_peakwidth]=ttest2(peakW(:,1),peakwlater(:));
 
 subplot(4,3,6)
 hold on
@@ -217,6 +217,10 @@ disp('-----------------------------------')
 disp('Unbalanced anova First vs later responses (FR)')
 disp(['p-value Effect hit vs miss = ' num2str(p(1))])
 disp(['p-value Effect first vs later = ' num2str(p(2))])
+
+%post hoc test
+[~,p_posthoc_correct]=ttest2(FR_all.correct_1,FR_all.correct_later);
+[~,p_posthoc_incorrect]=ttest2(FR_all.incorrect_1,FR_all.incorrect_later);
 
 %% balanced
 nsample=size(FR_all.incorrect_1,1);

@@ -84,6 +84,9 @@ ylim([0 0.3])
 xlabel('\Delta \kappa [mm^{-1}]')
 ylabel('Fraction of touches')
 
+[~,p_valuedk]=ttest2(abs(dk_correct),abs(dk_incorrect));
+disp(['p-value Delta Kappa (Correct vs incorrect) = ' num2str(p_valuedk)])
+
 subplot(4,2,4)
 histogram(LT_correct,0:10:350,'Normalization','Probability','FaceColor','g')
 hold on
@@ -104,6 +107,9 @@ histogram(ax1,LT_incorrect,1000:100:3000,'Normalization','Probability','FaceColo
 box off
 xticks([1000 3000])
 yticks([0 0.05])
+[~,p_valueLT]=ttest2(LT_correct,LT_incorrect);
+disp(['p-value Touch  length (Correct vs incorrect) = ' num2str(p_valueLT)])
+
 
 
 
@@ -118,6 +124,8 @@ yticks([0 0.1 0.2 0.3])
 ylim([0 0.3])
 xlabel('Inter-touch interval [ms]')
 ylabel('Fraction of touches')
+[~,p_valueITT]=ttest2(ITT_correct,ITT_incorrect);
+disp(['p-value Inter-Touch-Interval (Correct vs incorrect) = ' num2str(p_valueITT)])
 
 subplot(4,2,8)
 box off
@@ -138,9 +146,10 @@ disp(['Mean number of touches hit trials ' num2str(mean(NT_correct)) '+-' num2st
 %average number of touches in miss trials
 disp(['Mean number of touches miss trials ' num2str(mean(NT_incorrect)) '+-' num2str(std(NT_incorrect))])
 
-[~,p_value]=ttest2(NT_correct,NT_incorrect);
+[~,p_valueNT]=ttest2(NT_correct,NT_incorrect);
+disp(['p-value Number of touches (Correct vs incorrect) = ' num2str(p_valueNT)])
 
 t_value=(mean(NT_correct)-mean(NT_incorrect))/(std(NT_incorrect)^2/numel(NT_incorrect)+std(NT_correct)^2/numel(NT_correct));
 
-disp(['Difference between number of touches (hit vs miss): t-value =' num2str(t_value,'%.2f') ', p-value = ' num2str(p_value,'%.2e')])
+%disp(['Difference between number of touches (hit vs miss): t-value =' num2str(t_value,'%.2f') ', p-value = ' num2str(p_valueNT,'%.2e')])
 end

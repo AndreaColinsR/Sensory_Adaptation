@@ -119,4 +119,9 @@ disp(['p-value Effect first vs later = ' num2str(p(2))])
 %% balanced
 nsample=size(deltak_incorrect_1_all,1);
 balanced_anova(deltak_correct_1_all,deltak_incorrect_1_all,deltak_correct_later_all,deltak_incorrect_later_all,nsample)
+
+%post hoc test
+[~,p_posthoc_correct]=ttest2(deltak_correct_1_all,deltak_correct_later_all);
+[~,p_posthoc_incorrect]=ttest2(deltak_incorrect_1_all,deltak_incorrect_later_all);
+
 end
