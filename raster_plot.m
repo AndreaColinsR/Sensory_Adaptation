@@ -26,7 +26,7 @@ hold off
 
 % Filter the mean of the spikes
 xtime=(1:size(spikes,2))-100;
-boxcar=[zeros(1,5) ones(1,5)];
+boxcar=[zeros(1,5) ones(1,5)/5];
 filteredFR=conv(mean(spikes,1),boxcar,'same');
 
 subplot(4,3,nplot(3))
