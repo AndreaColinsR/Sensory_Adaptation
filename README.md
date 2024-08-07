@@ -1,8 +1,11 @@
 # Sensory_Adaptation
 
- MATLAB code that generates the figures from the paper "Sensory adaptation in the barrel cortex during active sensation in the awake, behaving mouse"
+ MATLAB code that generates the figures from Colins Rodriguez _et al_., 2024. "Sensory adaptation in the barrel cortex during active sensation in the behaving mouse".
 
+ Related data is published as
 
+Loft, Michaela S. E.; Colins Rodriguez, Andrea; Maravall, Miguel; Schiessl, Ingo; Petersen, Rasmus S. (2024). Extracellular neural recordings from mouse primary somatosensory cortex during a pole detection task. figshare. Dataset. https://doi.org/10.6084/m9.figshare.22788425.v1
+ 
 ## Summary
 
 The main objective of this code is to quantify the neural sensory adaptation in S1 during a pole detection task.
