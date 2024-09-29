@@ -6,14 +6,14 @@ if size(spikes,1)~=size(touch_idx,2)
 end
 %% plot rasterplot chronological order
 
-% subplot(4,3,nplot(1))
-% hold on
-% for i=1:size(spikes,1)
-%     s1=find(spikes(i,:))-100;
-%     if ~isempty(s1)
-%         plot(s1,i*ones(size(s1,2)),'.k'),
-%     end
-% end
+subplot(4,3,nplot(1))
+hold on
+for i=1:size(spikes,1)
+    s1=find(spikes(i,:))-100;
+    if ~isempty(s1)
+        plot(s1,i*ones(size(s1,2)),'.k'),
+    end
+end
 
 plot([0 0],[0 size(spikes,1)],'Color',[0.5 0.5 0.5])
 box off
@@ -45,21 +45,21 @@ hold off
 spikes=spikes(idx,:);
 
 %% plot rasterplot by touch within trial
-% subplot(4,3,nplot(2))
-% hold on
-% for i=1:size(spikes,1)
-%     s1=find(spikes(i,:))-100;
-%     if ~isempty(s1)
-%         % decide the colour of the dots
-%         if touch_idx(i)==1
-%             plot(s1,i*ones(size(s1,2)),'.','Color',[1 0 0]),
-%         elseif touch_idx(i)==2
-%             plot(s1,i*ones(size(s1,2)),'.','Color',[0.5 0 0]),
-%         elseif touch_idx(i)>2
-%             plot(s1,i*ones(size(s1,2)),'.','Color',[0 0 0]),
-%         end
-%     end
-% end
+subplot(4,3,nplot(2))
+hold on
+for i=1:size(spikes,1)
+    s1=find(spikes(i,:))-100;
+    if ~isempty(s1)
+        % decide the colour of the dots
+        if touch_idx(i)==1
+            plot(s1,i*ones(size(s1,2)),'.','Color',[1 0 0]),
+        elseif touch_idx(i)==2
+            plot(s1,i*ones(size(s1,2)),'.','Color',[0.5 0 0]),
+        elseif touch_idx(i)>2
+            plot(s1,i*ones(size(s1,2)),'.','Color',[0 0 0]),
+        end
+    end
+end
 
 plot([0 0],[0 size(spikes,1)],'Color',[0.5 0.5 0.5])
 box off

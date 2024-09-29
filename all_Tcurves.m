@@ -1,4 +1,4 @@
-function [change_explained_by_adap,FR_touch]=all_Tcurves(fig4)
+function [change_explained_by_adap,FR_touch]=all_Tcurves(fig4,fig2)
 do_extra_plot=0;
 counter=0;
 counter2=1;
@@ -35,7 +35,7 @@ mouse_number=unique(mouse_id);
 intercept_mouse=cell(numel(mouse_number),1);
 slope_mouse=cell(numel(mouse_number),1);
 RatioFR_mouse=cell(numel(mouse_number),1);
-
+ratioFRb=nan(nunits,1);
 
 for f=1:size(ff,1)
 
@@ -66,10 +66,11 @@ for f=1:size(ff,1)
             av_unit=av_unit+1;
 
             % Latencies
-            [Lat,touch_lat,prev_FR]=Latencies(Data.touch,Data.touch_per_whisker,total_psth,0,8);
+            figure(fig2)
+            [Lat,touch_lat,prev_FR]=Latencies(Data.touch,Data.touch_per_whisker,total_psth,0,17);
             [corr_LatFR(av_unit),p_corr(av_unit)]=corr(Lat',prev_FR');
             Lat_itouch(av_unit,:)=[mean(Lat(touch_lat==1)) mean(Lat(touch_lat==2)) mean(Lat(touch_lat==3)) mean(Lat(touch_lat>=4))];
-           
+            figure(fig4)
           
             %% testing whisker preference
             % does this neuron show a preference for a whisker
@@ -213,10 +214,13 @@ figure(fig4)
 %% latencies
 Lat_itouch(isnan(sum(Lat_itouch,2)),:)=[];
 
-subplot(2,4,8)
+figure(fig2)
+subplot(4,6,17)
 hold on
 plot(1:4,Lat_itouch','Color',[0.5 0.5 0.5])
 errorbar(1:4,mean(Lat_itouch,'omitnan'),std(Lat_itouch,'omitnan'),'Color','k')
+ylim([0 40])
+box off
 xlabel('Touch number')
 ylabel('Latency [ms]')
 
@@ -228,6 +232,8 @@ disp(['p-value latencies first vs 2nd touch = ' num2str(p_latency2)])
 disp(['p-value latencies first vs 3rd touch = ' num2str(p_latency3)])
 disp(['p-value latencies first vs 4th touch = ' num2str(p_latency4)])
 
+
+figure(fig4)
 subplot(2,4,5)
 hold on
 plot([-25 160],[-25 160],'-b','Linewidth',2)
@@ -308,6 +314,7 @@ disp(['Whole population =' num2str(100*mean(ratioFRb,'omitnan')) '%'])
 
 disp('')
 
+Mean_Adapt_mouse=nan(numel(mouse_number),1);
 for im=1:numel(mouse_number)
 
     disp(['Mouse ' num2str(im) ' =' num2str(100*mean(RatioFR_mouse{im})) '%'])

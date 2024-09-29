@@ -1,4 +1,6 @@
 function recovery_test(fig2)
+% this function test if later touches are less discriminable from the noise
+% (Fig 2)
 ff=dir('*.mat*');
 nunits=33;
 
@@ -23,14 +25,6 @@ for f=1:size(ff,1)
     
     load(ff(f).name,'Data')
     
-    %cd(folder{f})
-%     info=xlsread('ledtrials.xlsx');
-%     go_trials=find(info(:,7)==2);
-%     idx_correct=info(go_trials,6)==1;
-%     idx_incorrect=info(go_trials,6)==2;
-    
-    %ff=dir('*neural_data_S*');
-    %load(ff(1).name)
     
     for i_unit=1:size(Data.unit,2)
         
@@ -53,7 +47,7 @@ for f=1:size(ff,1)
             AUC_later2_correct(counter)=trapz(fliplr([ 1 fa3_correct]),fliplr([ 1 hit3_correct]));
             
             if do_extra_plot
-                subplot(4,3,9)
+                subplot(4,6,18)
                 plot([ 1 fa_correct] , [1 hit_correct],'-r')
                 hold on
                 plot([ 1 fa3_correct] , [1 hit3_correct],'-k')
@@ -89,7 +83,7 @@ for f=1:size(ff,1)
     end
     %cd ..
 end
-subplot(4,3,9)
+subplot(4,6,18)
 xlabel('False Alarm')
 ylabel('Hit')
 

@@ -76,7 +76,7 @@ for f=1:Nsessions
 
 
     %% adding latencies analyses
-    %[Lat,touch_lat,prev_FR]=Latencies(Data.touch,Data.touch_per_whisker,total_psth,1,2);
+    %[~,touch_lat,prev_FR]=Latencies(Data.touch,Data.touch_per_whisker,total_psth,1,17);
 
     %% Are initial latencies different for different touch numbers?
     %[~,pvalLat]=ttest2(Lat(touch_lat==1),Lat(touch_lat>=3));
@@ -96,7 +96,7 @@ for f=1:Nsessions
     [Lat_early,touch_lat_early]=Latencies(Data.touch(Early_trials,:),Data.touch_per_whisker(Early_trials,:,:),total_psth(Early_trials,:),0,2);
     
     [Lat_late,touch_lat_late]=Latencies(Data.touch(Late_trials,:),Data.touch_per_whisker(Late_trials,:,:),total_psth(Late_trials,:),0,2);
-    [~,pvalLat]=ttest2(Lat_early,Lat_late);
+    %[~,pvalLat]=ttest2(Lat_early,Lat_late);
     %disp(['p-value early vs late trials latencies = ' num2str(pvalLat,'%.4f')])
     
     %% plot example raster plot

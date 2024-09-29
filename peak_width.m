@@ -24,9 +24,6 @@ for itouch=1:4
         start_peak=nan;
     end
     
-    subplot(2,3,6)
-    hold on
-    plot(filteredFR)
 
     peakW(itouch)=end_peak+start_peak;
     peak_latency(itouch)=idx_max;

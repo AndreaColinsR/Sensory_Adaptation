@@ -23,7 +23,7 @@ distance_base_all_sessions(fig3)
 %% Figure 4
 
 fig4=figure;
-[change_explained_by_adap,FR_unit]=all_Tcurves(fig4);
+[change_explained_by_adap,FR_unit]=all_Tcurves(fig4,fig2);
 gradual_adaptation(fig4)
 
 
